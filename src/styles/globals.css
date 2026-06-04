@@ -1,0 +1,62 @@
+/* BetKing design tokens — Figma-generated, do not edit by hand */
+@import "./tokens.css";
+
+/* Prototype brand override: Deposit & Get handoff brand navy.
+   Kept here (not in the generated tokens.css) so it survives a Figma token regen.
+   Drives both `brand-navy` and the header `ssb-bg` (which maps to this var). */
+:root {
+  --ui-primary-main: #1a1f8c;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--ui-background-default);
+    color: var(--ui-text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+  }
+
+  /* Mobile-first base: app shell never wider than mobile in the prototype.
+     Wrap pages in a max-w-md container — desktop just shows a centered mobile frame. */
+  #root {
+    min-height: 100dvh;
+  }
+
+  button {
+    font: inherit;
+    cursor: pointer;
+  }
+
+  /* Hide arrows on number inputs (used on Deposit page) */
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+}
+
+@layer components {
+  /* Mobile-first app frame — used on every screen.
+     Desktop visitors see the same mobile frame centered. */
+  .app-frame {
+    max-width: 28rem; /* 448px — mobile width */
+    margin-inline: auto;
+    min-height: 100dvh;
+    background: var(--ui-background-paper);
+    position: relative;
+  }
+}

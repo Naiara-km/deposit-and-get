@@ -1,0 +1,321 @@
+/*
+ * Design System Tokens
+ * Brand: betking
+ * Mode: light
+ * Generated from Figma Variables
+ * Total tokens: 254
+ */
+
+:root {
+
+  /* Opacity (per-brand; default 40%) */
+  --ui-opacity-disabled: 0.4;
+  --ui-opacity-loading: 0.4;
+
+  /* Shadows (from Figma MUI Tailwind Shadows – rgba(0,16,65,…) = backdrop tint) */
+  /* Custom overlay shadows – for overlayed cards (e.g. Bet Info panel, modals) */
+  --ui-shadow-custom-overlay-xs: 0px 0px 3px 0px rgba(0, 16, 65, 0.1), 0px 0px 2px -1px rgba(0, 16, 65, 0.1);
+  --ui-shadow-custom-overlay-sm: 0px 2px 6px 0px rgba(0, 16, 65, 0.06);
+  --ui-shadow-custom-overlay-md: 0px 0px 6px 0px rgba(0, 16, 65, 0.03), 0px 2px 6px 0px rgba(0, 16, 65, 0.12), 0px -1px 3px 0px rgba(0, 16, 65, 0.03);
+  /* Default Tailwind-style shadows */
+  --ui-shadow-default: 0px 1px 3px 0px rgba(0, 16, 65, 0.1), 0px 1px 2px -1px rgba(0, 16, 65, 0.1);
+  --ui-shadow-sm: 0px 1px 2px 0px rgba(0, 16, 65, 0.05);
+  --ui-shadow-md: 0px 4px 6px -1px rgba(0, 16, 65, 0.1), 0px 2px 4px -2px rgba(0, 16, 65, 0.1);
+  --ui-shadow-lg: 0px 10px 15px -3px rgba(0, 16, 65, 0.1), 0px 4px 6px -4px rgba(0, 16, 65, 0.1);
+  --ui-shadow-xl: 0px 20px 25px -5px rgba(0, 16, 65, 0.1), 0px 8px 10px -6px rgba(0, 16, 65, 0.1);
+  --ui-shadow-2xl: 0px 25px 50px -12px rgba(0, 16, 65, 0.25);
+  --ui-shadow-inner: inset 0px 2px 4px 0px rgba(0, 16, 65, 0.06);
+  /* Aliases – surface-paper uses default; overlays use custom-overlay-md */
+  --ui-surface-paper-shadow: var(--ui-shadow-default);
+
+  /* Action */
+  --ui-action-30p: rgba(0, 16, 65, 0.3);
+  --ui-action-active: rgba(0, 16, 65, 0.54);
+  --ui-action-disabled: rgba(0, 16, 65, 0.26);
+  --ui-action-disabled-background: rgba(0, 16, 65, 0.12);
+  --ui-action-focus: rgba(37, 93, 189, 0.12);
+  --ui-action-hover: rgba(37, 93, 189, 0.04);
+  --ui-action-selected: rgba(37, 93, 189, 0.08);
+
+  /* Background */
+  --ui-background-0p: rgba(255, 255, 255, 0);
+  --ui-background-12p: #e5ecf7;
+  --ui-background-4p: #f6f9fc;
+  --ui-background-8p: #eef2fa;
+  --ui-background-backdrop: #001041;
+  --ui-background-backdrop-overlay: rgba(0, 16, 65, 0.8);
+  --ui-background-default: #f6f9fc;
+  --ui-background-paper: #ffffff;
+
+  /* Common */
+  --ui-common-black-black-100p: #000000;
+  --ui-common-black-black-12p: rgba(0, 0, 0, 0.12);
+  --ui-common-black-black-16p: rgba(0, 0, 0, 0.16);
+  --ui-common-black-black-30p: rgba(0, 0, 0, 0.3);
+  --ui-common-black-black-4p: rgba(0, 0, 0, 0.04);
+  --ui-common-black-black-50p: rgba(0, 0, 0, 0.5);
+  --ui-common-black-black-60p: rgba(0, 0, 0, 0.6);
+  --ui-common-black-black-8p: rgba(0, 0, 0, 0.08);
+  --ui-common-grey-100: #f5f5f5;
+  --ui-common-grey-200: #eeeeee;
+  --ui-common-grey-300: #e0e0e0;
+  --ui-common-grey-400: #bdbdbd;
+  --ui-common-grey-50: #fafafa;
+  --ui-common-grey-500: #9e9e9e;
+  --ui-common-grey-600: #757575;
+  --ui-common-grey-700: #616161;
+  --ui-common-grey-800: #424242;
+  --ui-common-grey-900: #212121;
+  --ui-common-grey-a100: #d5d5d5;
+  --ui-common-grey-a200: #aaaaaa;
+  --ui-common-grey-a400: #a3a0a0;
+  --ui-common-grey-a700: #303030;
+  --ui-common-white-white-100p: #ffffff;
+  --ui-common-white-white-12p: rgba(255, 255, 255, 0.12);
+  --ui-common-white-white-16p: rgba(255, 255, 255, 0.16);
+  --ui-common-white-white-30p: rgba(255, 255, 255, 0.3);
+  --ui-common-white-white-4p: rgba(255, 255, 255, 0.04);
+  --ui-common-white-white-50p: rgba(255, 255, 255, 0.5);
+  --ui-common-white-white-60p: rgba(255, 255, 255, 0.6);
+  --ui-common-white-white-8p: rgba(255, 255, 255, 0.08);
+
+  /* Complimentary */
+  --ui-complimentary-contrast: #001041;
+  --ui-complimentary-dark: #e5ecf7;
+  --ui-complimentary-light: #f6f9fc;
+  --ui-complimentary-main: #eef2fa;
+
+  /* Complimentary-onhybrid */
+  --ui-complimentary-onhybrid-contrast: #e3f1fd;
+  --ui-complimentary-onhybrid-dark: rgba(227, 241, 253, 0.4);
+  --ui-complimentary-onhybrid-light: rgba(227, 241, 253, 0.4);
+  --ui-complimentary-onhybrid-main: rgba(227, 241, 253, 0.3);
+
+  /* Components */
+  --ui-components-borders-divider: rgba(37, 93, 189, 0.12);
+  --ui-components-borders-outline-border: rgba(37, 93, 189, 0.23);
+  --ui-components-inputs-filled-input-background: rgba(37, 93, 189, 0.06);
+  --ui-components-inputs-standard-input-line: rgba(37, 93, 189, 0.42);
+  --ui-components-rating-active: #ffb400;
+  --ui-components-skeleton-on-dark: rgba(255, 255, 255, 0.16);
+  --ui-components-skeleton-on-light: #eef2fa;
+  --ui-components-skeleton-on-light-mid: #dee6f5;
+  --ui-components-snackbar: #323232;
+  --ui-components-tooltip-contrast: #ffffff;
+  --ui-components-tooltip-main: rgba(97, 97, 97, 0.9);
+
+  /* Custom-palettes */
+  --ui-custom-palettes-football-cards-redcard: #f20000;
+  --ui-custom-palettes-football-cards-yellowcard: #ffe148;
+  --ui-custom-palettes-homedrawaway-away: #ff0041;
+  --ui-custom-palettes-homedrawaway-draw: #e3e5ed;
+  --ui-custom-palettes-homedrawaway-home: #255dbd;
+  --ui-custom-palettes-jackpot-v2-duke: #1affff;
+  --ui-custom-palettes-jackpot-v2-king: #ff1aff;
+  --ui-custom-palettes-pick11-brand-contrast: #001041;
+  --ui-custom-palettes-pick11-brand-main: #1dff6d;
+  --ui-custom-palettes-pick11-odds-selected-contrast: #001041;
+  --ui-custom-palettes-pick11-odds-selected-main: #1dff6d;
+  --ui-custom-palettes-sportsbook-generosity-halftime-up: #0ACA9D;
+  --ui-custom-palettes-sportsbook-live-live-contrast: #ffffff;
+  --ui-custom-palettes-sportsbook-live-live-main: #03a9f4;
+  --ui-custom-palettes-sportsbook-odds-selected-contrast: #1affff;
+  --ui-custom-palettes-sportsbook-odds-selected-main: #001041;
+  --ui-custom-palettes-sportsbook-odds-unselected-12p: rgba(227, 241, 253, 0.12);
+  --ui-custom-palettes-sportsbook-odds-unselected-30p: rgba(227, 241, 253, 0.3);
+  --ui-custom-palettes-sportsbook-odds-unselected-4p: rgba(227, 241, 253, 0.04);
+  --ui-custom-palettes-sportsbook-odds-unselected-50p: rgba(227, 241, 253, 0.5);
+  --ui-custom-palettes-sportsbook-odds-unselected-80p: rgba(227, 241, 253, 0.8);
+  --ui-custom-palettes-sportsbook-odds-unselected-8p: rgba(227, 241, 253, 0.08);
+  --ui-custom-palettes-sportsbook-odds-unselected-contrast: #255dbd;
+  --ui-custom-palettes-sportsbook-odds-unselected-contrast-50p: rgba(37, 93, 189, 0.5);
+  --ui-custom-palettes-sportsbook-odds-unselected-dark: #cfe7fc;
+  --ui-custom-palettes-sportsbook-odds-unselected-light: #ecf5fe;
+  --ui-custom-palettes-sportsbook-odds-unselected-main: #e3f1fd;
+  --ui-custom-palettes-sportsbook-odds-unselected-contrast-dark: #194184;
+  --ui-custom-palettes-sportsbook-odds-unselected-contrast-light: #507dca;
+  --ui-custom-palettes-virtuals-brands-contrast: #ffffff;
+  --ui-custom-palettes-virtuals-brands-contrast-16p: rgba(255, 255, 255, 0.16);
+  --ui-custom-palettes-virtuals-brands-contrast-30p: rgba(255, 255, 255, 0.3);
+  --ui-custom-palettes-virtuals-brands-contrast-60p: rgba(255, 255, 255, 0.6);
+  --ui-custom-palettes-virtuals-brands-kings-afkon: #00955f;
+  --ui-custom-palettes-virtuals-brands-kings-bundliga: #950341;
+  --ui-custom-palettes-virtuals-brands-kings-bundliga-inactive: #eb8b9f;
+  --ui-custom-palettes-virtuals-brands-kings-champions: #04168d;
+  --ui-custom-palettes-virtuals-brands-kings-eurokup: #0055ab;
+  --ui-custom-palettes-virtuals-brands-kings-italiano: #2865b5;
+  --ui-custom-palettes-virtuals-brands-kings-italiano-inactive: #92ceec;
+  --ui-custom-palettes-virtuals-brands-kings-league: #710376;
+  --ui-custom-palettes-virtuals-brands-kings-league-inactive: #c583c7;
+  --ui-custom-palettes-virtuals-brands-kings-liga: #bd6500;
+  --ui-custom-palettes-virtuals-brands-kings-liga-inactive: #f7cf80;
+  --ui-custom-palettes-w-l-d-palette-draw: #9e9e9e;
+  --ui-custom-palettes-w-l-d-palette-lose: #b00020;
+  --ui-custom-palettes-w-l-d-palette-win: #4caf50;
+
+  /* Gradients-atoms
+  --ui-gradients-atoms-backdrop: {UI.Light.Background.v-Backdrop};
+  --ui-gradients-atoms-highlight: {UI.Light.Highlight.v-Main};
+  --ui-gradients-atoms-notification-main: {UI.Light.Notification.v-Main};
+  --ui-gradients-atoms-primary: {UI.Light.Primary.v-Main};
+  --ui-gradients-atoms-primary-300: {UI.Light.Primary.Shades.300};
+  --ui-gradients-atoms-primary-800: {UI.Light.Primary.Shades.800};
+  --ui-gradients-atoms-secondary: {UI.Light.Secondary.v-Main};
+  --ui-gradients-atoms-value: {UI.Light.Value.v-Main};
+  --ui-gradients-atoms-wht-0p-transparent: rgba(255, 255, 255, 0); */
+
+  /* Highlight */
+  --ui-highlight-0p: rgba(26, 255, 255, 0);
+  --ui-highlight-12p: rgba(26, 255, 255, 0.12);
+  --ui-highlight-30p: rgba(26, 255, 255, 0.3);
+  --ui-highlight-4p: rgba(26, 255, 255, 0.04);
+  --ui-highlight-50p: rgba(26, 255, 255, 0.5);
+  --ui-highlight-80p: rgba(26, 255, 255, 0.8);
+  --ui-highlight-8p: rgba(26, 255, 255, 0.08);
+  --ui-highlight-contrast: #001041;
+  --ui-highlight-dark: #12b2b2;
+  --ui-highlight-light: #47ffff;
+  --ui-highlight-main: #1affff;
+
+  /* Hybrid */
+  --ui-hybrid-actions-selected-contrast: #ffffff;
+  --ui-hybrid-actions-selected-main: #255dbd;
+  --ui-hybrid-primary-shades-12p: rgba(227, 241, 253, 0.12);
+  --ui-hybrid-primary-shades-16p: rgba(227, 241, 253, 0.12);
+  --ui-hybrid-primary-shades-30p: rgba(227, 241, 253, 0.3);
+  --ui-hybrid-primary-shades-4p: rgba(227, 241, 253, 0.04);
+  --ui-hybrid-primary-shades-50p: rgba(227, 240, 253, 0.5);
+  --ui-hybrid-primary-shades-60p: rgba(227, 241, 253, 0.6);
+  --ui-hybrid-primary-shades-8p: rgba(227, 241, 253, 0.08);
+  --ui-hybrid-text-disabled: rgba(227, 241, 253, 0.3);
+  --ui-hybrid-text-primary: #e3f1fd;
+  --ui-hybrid-text-secondary: rgba(227, 241, 253, 0.6);
+
+  /* Notification */
+  --ui-notification-12p: rgba(255, 0, 65, 0.12);
+  --ui-notification-30p: rgba(255, 0, 65, 0.3);
+  --ui-notification-4p: rgba(255, 0, 65, 0.04);
+  --ui-notification-50p: rgba(255, 0, 65, 0.5);
+  --ui-notification-8p: rgba(255, 0, 65, 0.08);
+  --ui-notification-contrast: #ffffff;
+  --ui-notification-dark: #b2002d;
+  --ui-notification-light: #ff3367;
+  --ui-notification-main: #ff0041;
+
+  /* Primary */
+  --ui-primary-contrast: #ffffff;
+  --ui-primary-dark: #000b2d;
+  --ui-primary-light: #333f67;
+  --ui-primary-main: #001041;
+  --ui-primary-shades-0p: rgba(0, 16, 65, 0);
+  --ui-primary-shades-100: #b9bfd4;
+  --ui-primary-shades-12p: rgba(0, 16, 65, 0.12);
+  --ui-primary-shades-16p: rgba(0, 16, 65, 0.16);
+  --ui-primary-shades-200: #8d96b6;
+  --ui-primary-shades-26: rgba(0, 16, 65, 0.26);
+  --ui-primary-shades-300: #626e9a;
+  --ui-primary-shades-30p: rgba(0, 16, 65, 0.3);
+  --ui-primary-shades-400: #435287;
+  --ui-primary-shades-4p: rgba(0, 16, 65, 0.04);
+  --ui-primary-shades-50: #e3e5ed;
+  --ui-primary-shades-50: rgba(0, 16, 65, 0.5);
+  --ui-primary-shades-500: #213775;
+  --ui-primary-shades-600: #1b306d;
+  --ui-primary-shades-60p: rgba(0, 16, 65, 0.6);
+  --ui-primary-shades-700: #132863;
+  --ui-primary-shades-800: #0a1f57;
+  --ui-primary-shades-80p: rgba(0, 16, 65, 0.8);
+  --ui-primary-shades-8p: rgba(0, 16, 65, 0.08);
+  --ui-primary-shades-900: #001041;
+
+  /* Secondary */
+  --ui-secondary-0p: rgba(37, 93, 189, 0);
+  --ui-secondary-12p: rgba(37, 93, 189, 0.12);
+  --ui-secondary-16: rgba(37, 93, 189, 0.16);
+  --ui-secondary-23p: rgba(37, 93, 189, 0.23);
+  --ui-secondary-30p: rgba(37, 93, 189, 0.3);
+  --ui-secondary-4p: rgba(37, 93, 189, 0.04);
+  --ui-secondary-50p: rgba(37, 93, 189, 0.5);
+  --ui-secondary-60p: rgba(37, 93, 189, 0.6);
+  --ui-secondary-80p: rgba(37, 93, 189, 0.8);
+  --ui-secondary-8p: rgba(37, 93, 189, 0.08);
+  --ui-secondary-contrast: #ffffff;
+  --ui-secondary-dark: #194184;
+  --ui-secondary-light: #507dca;
+  --ui-secondary-main: #255dbd;
+
+  /* Semantic-colours */
+  --ui-semantic-colours-error-0p: rgba(211, 47, 47, 0);
+  --ui-semantic-colours-error-12p: rgba(211, 47, 47, 0.12);
+  --ui-semantic-colours-error-140p: #fcf5f6;
+  --ui-semantic-colours-error-160p: #541313;
+  --ui-semantic-colours-error-190p: #fbeaea;
+  --ui-semantic-colours-error-30p: rgba(211, 47, 47, 0.3);
+  --ui-semantic-colours-error-4p: rgba(211, 47, 47, 0.04);
+  --ui-semantic-colours-error-50p: rgba(211, 47, 47, 0.5);
+  --ui-semantic-colours-error-8p: rgba(211, 47, 47, 0.08);
+  --ui-semantic-colours-error-contrast: #ffffff;
+  --ui-semantic-colours-error-dark: #c62828;
+  --ui-semantic-colours-error-light: #ef5350;
+  --ui-semantic-colours-error-main: #d32f2f;
+  --ui-semantic-colours-info-0p: rgba(2, 136, 209, 0);
+  --ui-semantic-colours-info-12p: rgba(2, 136, 209, 0.12);
+  --ui-semantic-colours-info-160p: #013654;
+  --ui-semantic-colours-info-190p: #e6f3fa;
+  --ui-semantic-colours-info-30p: rgba(2, 136, 209, 0.3);
+  --ui-semantic-colours-info-4p: rgba(2, 136, 209, 0.04);
+  --ui-semantic-colours-info-50p: rgba(2, 136, 209, 0.5);
+  --ui-semantic-colours-info-8p: rgba(2, 136, 209, 0.08);
+  --ui-semantic-colours-info-contrast: #ffffff;
+  --ui-semantic-colours-info-dark: #01579b;
+  --ui-semantic-colours-info-light: #03a9f4;
+  --ui-semantic-colours-info-main: #0288d1;
+  --ui-semantic-colours-success-0p: rgba(76, 175, 80, 0);
+  --ui-semantic-colours-success-12p: rgba(76, 175, 80, 0.12);
+  --ui-semantic-colours-success-160p: #123214;
+  --ui-semantic-colours-success-190p: #eaf2ea;
+  --ui-semantic-colours-success-30p: rgba(76, 175, 80, 0.3);
+  --ui-semantic-colours-success-4p: rgba(76, 175, 80, 0.04);
+  --ui-semantic-colours-success-50p: rgba(76, 175, 80, 0.5);
+  --ui-semantic-colours-success-8p: rgba(76, 175, 80, 0.08);
+  --ui-semantic-colours-success-contrast: #ffffff;
+  --ui-semantic-colours-success-dark: #357a38;
+  --ui-semantic-colours-success-light: #6fbf73;
+  --ui-semantic-colours-success-main: #4caf50;
+  --ui-semantic-colours-warning-0p: rgba(237, 108, 2, 0);
+  --ui-semantic-colours-warning-12p: rgba(237, 108, 2, 0.12);
+  --ui-semantic-colours-warning-160p: #5f2b01;
+  --ui-semantic-colours-warning-190p: #fdf0e6;
+  --ui-semantic-colours-warning-30p: rgba(237, 108, 2, 0.3);
+  --ui-semantic-colours-warning-4p: rgba(237, 108, 2, 0.04);
+  --ui-semantic-colours-warning-50p: rgba(237, 108, 2, 0.5);
+  --ui-semantic-colours-warning-8p: rgba(237, 108, 2, 0.08);
+  --ui-semantic-colours-warning-contrast: #ffffff;
+  --ui-semantic-colours-warning-dark: #e65100;
+  --ui-semantic-colours-warning-light: #ff9800;
+  --ui-semantic-colours-warning-main: #ed6c02;
+
+  /* Text */
+  --ui-text-bullet-emphasis-contrast: #ffffff;
+  --ui-text-bullet-emphasis-main: #001041;
+  --ui-text-disabled: rgba(0, 12, 45, 0.38);
+  --ui-text-emphasis: #001041;
+  --ui-text-primary: rgba(0, 12, 45, 0.87);
+  --ui-text-secondary: rgba(0, 12, 45, 0.6);
+  --ui-text-shades-12p: rgba(0, 12, 45, 0.12);
+  --ui-text-shades-30p: rgba(0, 12, 45, 0.3);
+  --ui-text-shades-4p: rgba(0, 12, 45, 0.04);
+  --ui-text-shades-60p: rgba(0, 12, 45, 0.6);
+
+  /* Value */
+  --ui-value-0: rgba(255, 196, 0, 0);
+  --ui-value-12p: rgba(255, 196, 0, 0.08);
+  --ui-value-30p: rgba(255, 196, 0, 0.3);
+  --ui-value-4p: rgba(255, 196, 0, 0);
+  --ui-value-50p: rgba(255, 196, 0, 0.5);
+  --ui-value-8p: rgba(255, 196, 0, 0.08);
+  --ui-value-contrast: #001041;
+  --ui-value-dark: #e5b000;
+  --ui-value-light: #ffd64d;
+  --ui-value-main: #f1c72f;
+}
