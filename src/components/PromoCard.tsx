@@ -9,6 +9,7 @@ import {
 } from "@/lib/cardVariant";
 import { SegmentedRing } from "@/components/SegmentedRing";
 import { Countdown } from "@/components/Countdown";
+import { asset } from "@/lib/asset";
 
 /**
  * PromoCard — Progress 1 redesign (Figma 71/75 cluster + 78:5776).
@@ -56,7 +57,7 @@ export function PromoCard() {
       <div
         aria-hidden
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: 'url("/figma/bg-active.png")' }}
+        style={{ backgroundImage: `url("${asset("figma/bg-active.png")}")` }}
       />
       {/* Top-only scrim so the title text at the top stays legible while the
           rest of the hero art (Gates of Olympus characters) reads CRISP —

@@ -6,8 +6,9 @@
  * all 8 tiles use the same Clover Gold placeholder per the Figma — the real
  * product would show distinct game art per qualifying title.
  */
+import { asset } from "@/lib/asset";
 
-const PLACEHOLDER_THUMB = "/figma/game-clover-gold.png";
+const PLACEHOLDER_THUMB = asset("figma/game-clover-gold.png");
 
 const GAMES = Array.from({ length: 8 }).map((_, i) => ({
   id: `eligible-${i}`,

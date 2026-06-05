@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { DepositSignal } from "@/components/DepositSignal";
 import { usePromo } from "@/context/PromoContext";
+import { asset } from "@/lib/asset";
 
 type SubmitPhase = "idle" | "pending" | "confirmed";
 type DepositMethod = "voucher" | "card" | "eft";
@@ -185,7 +186,7 @@ function MethodPicker({
           navy backgrounds. */}
       <div className="mt-7 flex justify-center px-4">
         <img
-          src="/figma/supersportbet-logo-dark.svg"
+          src={asset("figma/supersportbet-logo-dark.svg")}
           alt="SuperSportBet"
           className="h-9 w-auto"
         />

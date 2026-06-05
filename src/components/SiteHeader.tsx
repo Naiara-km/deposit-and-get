@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { usePromo } from "@/context/PromoContext";
+import { asset } from "@/lib/asset";
 
 /**
  * SuperSportBet header — single-row AppBar.
@@ -24,7 +25,7 @@ export function SiteHeader() {
       <Link to="/" aria-label="SuperSportBet home" className="px-1">
         <span className="block h-8 w-[140px]">
           <img
-            src="/figma/supersportbet-logo.svg"
+            src={asset("figma/supersportbet-logo.svg")}
             alt="SuperSportBet"
             className="h-full w-full object-contain object-left"
           />
@@ -47,7 +48,7 @@ export function SiteHeader() {
               {MOCK_BALANCE}
             </span>
             <img
-              src="/figma/icon-cached.svg"
+              src={asset("figma/icon-cached.svg")}
               alt=""
               aria-hidden
               className="h-3.5 w-3.5"
@@ -62,7 +63,7 @@ export function SiteHeader() {
           className="grid place-items-center rounded-full p-3 hover:bg-ssb-tint-12"
         >
           <img
-            src="/figma/icon-person.svg"
+            src={asset("figma/icon-person.svg")}
             alt=""
             aria-hidden
             className="size-6"

@@ -12,6 +12,7 @@ import { CriteriaTable } from "@/components/CriteriaTable";
 import { FAQAccordion } from "@/components/FAQAccordion";
 import { SiteFooter } from "@/components/SiteFooter";
 import { StickyDetailsCTA } from "@/components/StickyDetailsCTA";
+import { asset } from "@/lib/asset";
 
 /**
  * Promotion Details page — Claude Design handoff (detail-page.jsx).
@@ -156,7 +157,7 @@ function Hero({ variant }: { variant: CardVariant }) {
       <div
         aria-hidden
         className={`absolute inset-0 bg-cover bg-center ${bw ? "[filter:grayscale(1)]" : ""}`}
-        style={{ backgroundImage: 'url("/figma/bg-available.png")' }}
+        style={{ backgroundImage: `url("${asset("figma/bg-available.png")}")` }}
       />
       <div
         aria-hidden

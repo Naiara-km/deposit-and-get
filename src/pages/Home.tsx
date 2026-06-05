@@ -15,6 +15,7 @@ import {
   isActiveVariant,
   isEndedVariant,
 } from "@/lib/cardVariant";
+import { asset } from "@/lib/asset";
 
 /**
  * Home page — SuperSportBet sportsbook landing (Figma node 44:23241).
@@ -74,7 +75,7 @@ function DepositGetBanner() {
       <div
         aria-hidden
         className={`absolute inset-0 bg-cover bg-center ${isEnded ? "[filter:grayscale(0.6)]" : ""}`}
-        style={{ backgroundImage: 'url("/figma/bg-available.png")' }}
+        style={{ backgroundImage: `url("${asset("figma/bg-available.png")}")` }}
       />
       <div
         aria-hidden
