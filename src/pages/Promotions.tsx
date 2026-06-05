@@ -20,8 +20,11 @@ import { usePromo } from "@/context/PromoContext";
  * dropped — the new design surfaces all promos as a single stacked list.
  */
 export function Promotions() {
-  const { state, isOptedIn } = usePromo();
-  const activeCount = isOptedIn ? 1 : 0;
+  const { state, isOptedIn, hasOptedOut } = usePromo();
+  // Active count drops to zero whenever the user has opted out, so the
+  // accordion + the promo card hide alongside it.
+  const activeCount = isOptedIn && !hasOptedOut ? 1 : 0;
+  const showPromoCard = !isOptedIn && !hasOptedOut;
 
   return (
     <main className="bg-surface-app pb-16">
@@ -45,7 +48,7 @@ export function Promotions() {
           SuperSportBet Promos
         </h2>
         <div className="flex flex-col gap-4">
-          {!isOptedIn && <PromoCard />}
+          {showPromoCard && <PromoCard />}
           <SamplePlaceholders />
         </div>
         <p className="mt-3 text-[10px] uppercase tracking-wide text-text-secondary/60">

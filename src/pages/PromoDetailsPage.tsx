@@ -1,5 +1,6 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Gift } from "lucide-react";
+import { Gift, X } from "lucide-react";
 import { usePromo, type CardVariant } from "@/context/PromoContext";
 import { cardVariant, isActiveVariant, isAvailableVariant, isEndedVariant } from "@/lib/cardVariant";
 import { SegmentedRing } from "@/components/SegmentedRing";
@@ -25,24 +26,27 @@ export function PromoDetailsPage() {
   const {
     promo,
     state,
-    setState,
-    setRedemptions,
     redemptions,
     poolRemaining,
     isPoolLow,
-    isOptedIn,
     isJoining,
     joinPromo,
+    hasOptedOut,
+    optOut,
   } = usePromo();
   const variant = cardVariant(state, redemptions, isPoolLow);
   const navigate = useNavigate();
+  const [showOptOutModal, setShowOptOutModal] = useState(false);
 
-  function handleOptOut() {
-    // Prototype-only: reset progress and return to available so the user
-    // can re-enter the journey. In production this would deactivate the
-    // user's opt-in via API and likely show a confirmation modal first.
-    setRedemptions(0);
-    setState("available");
+  // If the user previously opted out and lands on Details (e.g. via a
+  // direct URL or browser back), bounce them back to the promo list.
+  useEffect(() => {
+    if (hasOptedOut) navigate("/promotions", { replace: true });
+  }, [hasOptedOut, navigate]);
+
+  function handleConfirmOptOut() {
+    optOut();
+    setShowOptOutModal(false);
     navigate("/promotions");
   }
 
@@ -93,12 +97,14 @@ export function PromoDetailsPage() {
       <EligibleGames />
       <CriteriaTable />
       <FAQAccordion />
-      {/* OPT-OUT — opted-in states only. Resets progress + returns to /promotions. */}
-      {isOptedIn && (
+      {/* OPT-OUT — ACTIVE states only (active, active-start, active-low).
+          Hidden on available, available-full, completed, ended-*. Click opens
+          a confirmation modal so the user understands they'll lose progress. */}
+      {isActiveVariant(variant) && (
         <div className="px-[18px] pb-6 pt-2">
           <button
             type="button"
-            onClick={handleOptOut}
+            onClick={() => setShowOptOutModal(true)}
             className="w-full rounded-full border border-dg-ink-dark/30 bg-white px-4 py-3 text-[13px] font-bold uppercase tracking-[0.05em] text-dg-ink-dark transition hover:bg-dg-ink-dark/5"
           >
             Opt-Out
@@ -106,6 +112,14 @@ export function PromoDetailsPage() {
         </div>
       )}
       <SiteFooter />
+
+      {showOptOutModal && (
+        <OptOutModal
+          earned={redemptions * promo.rewardCount}
+          onCancel={() => setShowOptOutModal(false)}
+          onConfirm={handleConfirmOptOut}
+        />
+      )}
 
       {/* Sticky bottom CTA — hidden for completed (journey done) and
           ended-pool (already had no CTA per existing logic). */}
@@ -450,5 +464,90 @@ function BackIcon() {
       <line x1="19" y1="12" x2="5" y2="12" />
       <polyline points="12 19 5 12 12 5" />
     </svg>
+  );
+}
+
+/* =========================================================== OptOutModal */
+
+/**
+ * Confirmation modal for the OPT-OUT action. Lists what the user will lose
+ * (progress + future spins) so they make an informed decision before
+ * permanently leaving the promo.
+ */
+function OptOutModal({
+  earned,
+  onCancel,
+  onConfirm,
+}: {
+  earned: number;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  // Esc to dismiss.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onCancel();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onCancel]);
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="opt-out-title"
+      className="fixed inset-0 z-50 grid place-items-center bg-black/55 p-4"
+      onClick={onCancel}
+    >
+      <div
+        // stop the backdrop click from closing when the user clicks inside
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-[360px] rounded-2xl bg-white p-5 text-dg-ink-dark shadow-[0_24px_60px_rgba(8,10,50,0.3)]"
+      >
+        <button
+          type="button"
+          onClick={onCancel}
+          aria-label="Close"
+          className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full text-dg-ink-sub hover:bg-dg-ink-dark/5"
+        >
+          <X size={18} />
+        </button>
+        <h2
+          id="opt-out-title"
+          className="pr-6 text-[18px] font-extrabold leading-tight"
+        >
+          Opt out of this promotion?
+        </h2>
+        <p className="mt-2 text-[14px] leading-snug text-dg-ink-sub">
+          You'll lose all your progress and won't benefit from any further
+          rewards.
+          {earned > 0 ? (
+            <>
+              {" "}You'll keep the <b className="text-dg-ink-dark">{earned}</b>{" "}
+              Bonus Spins you've already earned.
+            </>
+          ) : null}{" "}
+          This can't be undone from the app.
+        </p>
+
+        <div className="mt-5 flex gap-2.5">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="flex-1 rounded-full border border-dg-ink-dark/20 bg-white px-4 py-2.5 text-[13px] font-bold text-dg-ink-dark transition hover:bg-dg-ink-dark/5"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            className="flex-1 rounded-full bg-dg-coral px-4 py-2.5 text-[13px] font-extrabold uppercase tracking-[0.04em] text-white transition hover:opacity-90"
+          >
+            Opt out
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

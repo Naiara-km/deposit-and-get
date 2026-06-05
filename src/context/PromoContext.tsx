@@ -72,6 +72,12 @@ interface PromoContextValue {
   // debug — render the whole prototype in B&W (filter: grayscale(1))
   monochrome: boolean;
   setMonochrome: (b: boolean) => void;
+  // Permanent opt-out: when true the promo is hidden from every surface
+  // (Home banner, Promotions list, Active Promos). Any state change via
+  // Debug clears the flag so reviewers don't dead-end after testing.
+  hasOptedOut: boolean;
+  optOut: () => void;
+  resetOptOut: () => void;
 }
 
 const PromoContext = createContext<PromoContextValue | null>(null);
@@ -87,6 +93,18 @@ export function PromoProvider({ children }: { children: ReactNode }) {
   const [market, setMarket] = useState<Market>("ZA");
   const [isJoining, setIsJoining] = useState(false);
   const [monochrome, setMonochrome] = useState(false);
+  const [hasOptedOut, setHasOptedOut] = useState(false);
+
+  /** Opt out of the promo permanently (until reset). Wipes progress and
+   *  drops the user out of every promo surface. */
+  function optOut() {
+    setHasOptedOut(true);
+    setRedemptionsRaw(0);
+    setStateRaw("available");
+  }
+  function resetOptOut() {
+    setHasOptedOut(false);
+  }
 
   // Apply / remove grayscale on <html> so the whole prototype switches
   // between full colour and B&W. Used from the Debug panel.
@@ -107,12 +125,16 @@ export function PromoProvider({ children }: { children: ReactNode }) {
   /**
    * Smart wrapper around setState — entering `completed` auto-snaps redemptions
    * to max so the visual is consistent (donut ring shows ✓, earned spins = full).
+   *
+   * Any state change from the Debug panel also clears the hasOptedOut flag so
+   * reviewers can re-enter the promo from any state without restarting.
    */
   function setState(next: PromoState) {
     setStateRaw(next);
     if (next === "completed") {
       setRedemptionsRaw(maxRedemptions);
     }
+    if (hasOptedOut) setHasOptedOut(false);
   }
 
   /**
@@ -195,6 +217,9 @@ export function PromoProvider({ children }: { children: ReactNode }) {
       joinPromo,
       monochrome,
       setMonochrome,
+      hasOptedOut,
+      optOut,
+      resetOptOut,
     };
   }, [
     promo,
@@ -205,6 +230,7 @@ export function PromoProvider({ children }: { children: ReactNode }) {
     market,
     isJoining,
     monochrome,
+    hasOptedOut,
   ]);
 
   return <PromoContext.Provider value={value}>{children}</PromoContext.Provider>;

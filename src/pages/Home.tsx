@@ -42,13 +42,16 @@ export function Home() {
 /* ============================================================ Banner    */
 
 function BannerCarousel() {
+  const { hasOptedOut } = usePromo();
   // Deposit & Get sits first so it's the primary visible entry. The two
   // placeholder banners scroll into view on swipe — they only exist for
   // visual context per the Figma carousel.
+  // Once the user has opted out of Deposit & Get, hide its banner everywhere
+  // (per the prototype spec: "Users won't see the promotion anymore").
   return (
     <section className="bg-dg-navy py-1.5">
       <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <DepositGetBanner />
+        {!hasOptedOut && <DepositGetBanner />}
         <PlaceholderBanner color="from-[#3aa6f0] to-[#1c6cb3]" />
         <PlaceholderBanner color="from-[#ff7a59] to-[#c44a30]" />
       </div>
