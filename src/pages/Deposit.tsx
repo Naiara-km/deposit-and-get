@@ -475,10 +475,11 @@ function VoucherForm({
 }) {
   const valid = code.length >= 16;
   const submitting = phase !== "idle";
+  // Voucher deposits are excluded from the promo (per Deposit Criteria table:
+  // "Excluded methods: Manual bank transfer, in-store cash" — vouchers also
+  // sit outside the eligible set), so no awareness banner shows here.
   return (
     <div className="flex flex-col gap-4">
-      <PromoAwarenessBanner />
-
       {/* Provider */}
       <Field label="Provider">
         <div className="flex items-center justify-between gap-3 rounded-md border-b border-dg-ink-dark/15 bg-[#F3F2FB] px-3 py-2.5">
@@ -559,10 +560,11 @@ function CardOrEftForm({
       : kind === "card"
         ? "CONTINUE WITH CARD"
         : "CONTINUE WITH EFT";
+  // No top-level awareness banner here — the DepositSignal below the amount
+  // input already carries the same context (and is amount-aware), so showing
+  // both is repetitive.
   return (
     <div className="flex flex-col gap-4">
-      <PromoAwarenessBanner />
-
       {/* EFT-only: provider row */}
       {kind === "eft" && (
         <Field label="Provider">
