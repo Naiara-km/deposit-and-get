@@ -685,6 +685,7 @@ function PromoAwarenessBanner() {
   const {
     promo,
     state,
+    currencySymbol,
     isActivelyEarning,
     redemptionsRemaining,
     isJoining,
@@ -727,14 +728,12 @@ function PromoAwarenessBanner() {
       >
         <Gift size={18} className="mt-0.5 shrink-0 text-success" />
         <p className="text-[13px] leading-snug text-dg-ink-dark">
-          <strong>Deposit &amp; Get</strong> active —{" "}
-          <Link
-            to={`/promotions/${promo.id}`}
-            className="text-brand-blue underline"
-          >
-            view promo
-          </Link>
-          . Qualifying deposits earn{" "}
+          <strong>Deposit &amp; Get</strong> active. Qualifying{" "}
+          <strong>
+            {currencySymbol}
+            {promo.minDeposit.toLocaleString()}
+          </strong>{" "}
+          deposits earn{" "}
           <strong>{promo.rewardCount} Bonus Spins</strong>.
         </p>
       </aside>
