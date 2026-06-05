@@ -28,6 +28,9 @@ export function DebugPanel() {
     setMarket,
     monochrome,
     setMonochrome,
+    hasOptedOut,
+    optOut,
+    resetOptOut,
   } = usePromo();
 
   // Per the handoff-iteration request: when the promo is Completed the
@@ -207,6 +210,36 @@ export function DebugPanel() {
                 {label}
               </button>
             ))}
+          </div>
+        </Field>
+
+        {/* Promo visibility — for demos. After an opt-out the promo hides
+            everywhere; this toggle brings it back without needing to change
+            the lifecycle state. */}
+        <Field label="Promo visibility">
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={resetOptOut}
+              className={`flex-1 rounded-md border px-2 py-1.5 text-xs font-medium ${
+                !hasOptedOut
+                  ? "border-brand-blue bg-brand-blue text-white"
+                  : "border-outline text-text-secondary hover:border-brand-blue"
+              }`}
+            >
+              Visible
+            </button>
+            <button
+              type="button"
+              onClick={optOut}
+              className={`flex-1 rounded-md border px-2 py-1.5 text-xs font-medium ${
+                hasOptedOut
+                  ? "border-brand-blue bg-brand-blue text-white"
+                  : "border-outline text-text-secondary hover:border-brand-blue"
+              }`}
+            >
+              Opted out
+            </button>
           </div>
         </Field>
 
