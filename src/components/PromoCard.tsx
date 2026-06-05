@@ -127,7 +127,6 @@ export function PromoCard() {
             redemptions={redemptions}
             max={max}
             totalSpins={totalSpins}
-            rewardCount={promo.rewardCount}
             currencySymbol={currencySymbol}
             minDeposit={promo.minDeposit}
           />
@@ -317,7 +316,6 @@ function PanelCopy({
   redemptions,
   max,
   totalSpins,
-  rewardCount,
   currencySymbol,
   minDeposit,
 }: {
@@ -326,26 +324,13 @@ function PanelCopy({
   redemptions: number;
   max: number;
   totalSpins: number;
-  rewardCount: number;
   currencySymbol: string;
   minDeposit: number;
 }) {
-  // Start of journey — joined but no deposit yet.
-  // Reward shown is per-deposit (rewardCount), not the lifetime total — the
-  // user wins `rewardCount` for the next deposit, not `totalSpins` at once.
-  if (variant === "active-start") {
-    return (
-      <div className="min-w-0 flex-1">
-        <div className="text-[16px] font-extrabold leading-tight text-white">
-          You are in!
-        </div>
-        <div className="mt-1 text-[12.5px] leading-snug text-white/85">
-          Make your first deposit to win{" "}
-          <b className="text-dg-gold">{rewardCount} Bonus Spins</b>!
-        </div>
-      </div>
-    );
-  }
+  // Active-start (opted in, no deposits yet) now falls through to the same
+  // counter readout as active — per Figma 97:7953 the card shows the
+  // "Earned Spins / 0 /{total} / 0/{max} Deposits of R{min}" format from
+  // the moment the user opts in, instead of the previous "You are in!" copy.
   // Completed — celebratory copy, no counters.
   if (variant === "completed") {
     return (
