@@ -57,6 +57,7 @@ export function Deposit() {
   const [amount, setAmount] = useState<number | "">("");
   const [voucherCode, setVoucherCode] = useState("");
   const [phase, setPhase] = useState<SubmitPhase>("idle");
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   // External navigation to /deposit always lands on the picker view (the
   // "deposit homepage"). location.key changes on every router push/pop, so
@@ -142,6 +143,7 @@ export function Deposit() {
           currencySymbol={currencySymbol}
           phase={phase}
           onSubmit={handleSubmit}
+          onShowPromoDetails={() => setSheetOpen(true)}
         />
       )}
 
@@ -154,6 +156,8 @@ export function Deposit() {
           }
         />
       )}
+
+      {sheetOpen && <PromoBottomSheet onClose={() => setSheetOpen(false)} />}
     </main>
   );
 }
@@ -192,12 +196,8 @@ function MethodPicker({
         />
       </div>
 
-      {/* Top-level promo awareness banner — visible across all variants where
-          the user can either join, or has an active promo, or has just
-          finished. Hides on terminal / cap states. */}
-      <div className="mx-4 mt-6">
-        <PromoAwarenessBanner />
-      </div>
+      {/* Promo awareness lives inside the method forms now (Card / EFT),
+          not on this picker — keeps the homepage focused on method choice. */}
 
       {/* Recommended */}
       <SectionHeading>Recommended</SectionHeading>
@@ -329,6 +329,7 @@ function MethodForm({
   currencySymbol,
   phase,
   onSubmit,
+  onShowPromoDetails,
 }: {
   method: DepositMethod;
   onTabChange: (m: DepositMethod) => void;
@@ -343,6 +344,7 @@ function MethodForm({
   currencySymbol: string;
   phase: SubmitPhase;
   onSubmit: () => void;
+  onShowPromoDetails: () => void;
 }) {
   return (
     <>
@@ -367,6 +369,7 @@ function MethodForm({
             currencySymbol={currencySymbol}
             phase={phase}
             onSubmit={onSubmit}
+            onShowPromoDetails={onShowPromoDetails}
           />
         )}
         {method === "eft" && (
@@ -379,6 +382,7 @@ function MethodForm({
             currencySymbol={currencySymbol}
             phase={phase}
             onSubmit={onSubmit}
+            onShowPromoDetails={onShowPromoDetails}
           />
         )}
       </div>
@@ -543,6 +547,7 @@ function CardOrEftForm({
   currencySymbol,
   phase,
   onSubmit,
+  onShowPromoDetails,
 }: {
   kind: "card" | "eft";
   amount: number | "";
@@ -552,6 +557,7 @@ function CardOrEftForm({
   currencySymbol: string;
   phase: SubmitPhase;
   onSubmit: () => void;
+  onShowPromoDetails: () => void;
 }) {
   const submitting = phase !== "idle";
   const ctaLabel =
@@ -560,11 +566,15 @@ function CardOrEftForm({
       : kind === "card"
         ? "CONTINUE WITH CARD"
         : "CONTINUE WITH EFT";
-  // No top-level awareness banner here — the DepositSignal below the amount
-  // input already carries the same context (and is amount-aware), so showing
-  // both is repetitive.
+  // Promo awareness banner sits at the top of Card / EFT forms (Voucher
+  // excluded — voucher deposits don't qualify). In `available` state the
+  // banner is tappable: clicking opens the PromoBottomSheet with promo
+  // details. In `active` state it's static. The DepositSignal below the
+  // amount input still handles amount-aware messages.
   return (
     <div className="flex flex-col gap-4">
+      <PromoAwarenessBanner onSeeDetails={onShowPromoDetails} />
+
       {/* EFT-only: provider row */}
       {kind === "eft" && (
         <Field label="Provider">
@@ -679,11 +689,16 @@ function PrimaryCta({
 
 /**
  * PromoAwarenessBanner — shows the user where they stand vs the promo.
- *   - Available: prompt to join, with inline JOIN PROMO button
- *   - Active (cap not reached): "active promo" reminder
- *   - Otherwise: hidden
+ *   - Available: tappable text/icon area (opens PromoBottomSheet via the
+ *     `onSeeDetails` callback) + inline JOIN button as a shortcut.
+ *   - Active (cap not reached): static "Deposit & Get active" reminder.
+ *   - Otherwise: hidden.
  */
-function PromoAwarenessBanner() {
+function PromoAwarenessBanner({
+  onSeeDetails,
+}: {
+  onSeeDetails?: () => void;
+}) {
   const {
     promo,
     state,
@@ -700,19 +715,31 @@ function PromoAwarenessBanner() {
         role="status"
         className="flex items-center justify-between gap-3 rounded-[10px] border border-brand-blue/25 bg-brand-blue/[0.06] px-4 py-3"
       >
-        <div className="flex items-start gap-2.5">
+        <button
+          type="button"
+          onClick={onSeeDetails}
+          disabled={!onSeeDetails}
+          className="flex flex-1 items-start gap-2.5 text-left transition disabled:cursor-default"
+          aria-label="See promo details"
+        >
           <Gift size={18} className="mt-0.5 shrink-0 text-brand-blue" />
-          <p className="text-[13px] leading-snug text-dg-ink-dark">
-            <strong>Deposit &amp; Get</strong> is available — opt in to earn{" "}
+          <span className="text-[13px] leading-snug text-dg-ink-dark">
+            <strong>Deposit &amp; Get</strong> available — opt in to earn{" "}
             <strong className="text-brand-blue">
               {promo.rewardCount} Bonus Spins
             </strong>{" "}
-            per deposit
-          </p>
-        </div>
+            per deposit.{" "}
+            {onSeeDetails && (
+              <span className="text-brand-blue underline">See details</span>
+            )}
+          </span>
+        </button>
         <button
           type="button"
-          onClick={joinPromo}
+          onClick={(e) => {
+            e.stopPropagation();
+            joinPromo();
+          }}
           disabled={isJoining}
           className="shrink-0 whitespace-nowrap rounded-full bg-brand-blue px-4 py-1.5 text-[11.5px] font-extrabold uppercase tracking-[0.06em] text-white disabled:opacity-70"
         >
@@ -743,6 +770,130 @@ function PromoAwarenessBanner() {
   }
 
   return null;
+}
+
+/* =========================================================== PromoBottomSheet */
+
+/**
+ * Bottom sheet that surfaces promo details from the awareness banner.
+ * Slides up from the bottom of the viewport with a dim backdrop. Esc and
+ * backdrop-click close. Has Close + Join Promo actions; Join Promo wires
+ * to `joinPromo()` from context (with the existing 900ms spinner) and
+ * closes the sheet immediately so the user sees the active banner take
+ * over once the state flip lands.
+ */
+function PromoBottomSheet({ onClose }: { onClose: () => void }) {
+  const { promo, currencySymbol, isJoining, joinPromo } = usePromo();
+  const totalSpins = promo.rewardCount * promo.maxRedemptionsPerUser;
+  const min = `${currencySymbol}${promo.minDeposit.toLocaleString()}`;
+  const depositWord = promo.maxRedemptionsPerUser === 1 ? "deposit" : "deposits";
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  function handleJoin() {
+    joinPromo();
+    onClose();
+  }
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="promo-sheet-title"
+      className="fixed inset-0 z-50 flex flex-col justify-end bg-black/55"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative max-h-[88vh] overflow-y-auto rounded-t-2xl bg-white px-5 pb-6 pt-3 shadow-[0_-12px_30px_rgba(8,10,50,0.22)]"
+      >
+        {/* drag handle */}
+        <div
+          aria-hidden
+          className="mx-auto mb-4 h-1 w-12 rounded-full bg-dg-ink-dark/15"
+        />
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close promo details"
+          className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full text-dg-ink-sub hover:bg-dg-ink-dark/5"
+        >
+          <X size={20} />
+        </button>
+
+        <div className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-dg-ink-sub">
+          Deposit &amp; Get
+        </div>
+        <h2
+          id="promo-sheet-title"
+          className="mt-1 text-[24px] font-extrabold leading-tight text-dg-gold"
+          style={{ color: "#C99412" }}
+        >
+          {totalSpins} Bonus Spins
+        </h2>
+        <p className="mt-1 text-[13.5px] text-dg-ink-sub">
+          {promo.maxRedemptionsPerUser} {depositWord} of {min} to win
+        </p>
+
+        <ul className="mt-5 flex flex-col gap-3 text-[13px] text-dg-ink-dark">
+          <li className="flex items-start gap-3">
+            <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-brand-blue/10 text-brand-blue">
+              <Gift size={15} />
+            </span>
+            <span>
+              On every <strong>{min}</strong> deposit you earn{" "}
+              <strong>{promo.rewardCount} Bonus Spins</strong>
+              {promo.maxRedemptionsPerUser > 1 && (
+                <>
+                  , up to <strong>{totalSpins}</strong> total
+                </>
+              )}
+              .
+            </span>
+          </li>
+          <li className="flex items-start gap-3">
+            <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-brand-blue/10 text-brand-blue">
+              <Check size={15} />
+            </span>
+            <span>
+              Eligible methods: <strong>Card</strong> &amp;{" "}
+              <strong>EFT (Ozow)</strong>.
+            </span>
+          </li>
+          <li className="flex items-start gap-3">
+            <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-brand-blue/10 text-brand-blue">
+              <Info size={15} />
+            </span>
+            <span>{promo.campaignWindowLabel}</span>
+          </li>
+        </ul>
+
+        <div className="mt-6 flex gap-2.5">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 rounded-full border border-dg-ink-dark/20 bg-white px-4 py-3 text-[13px] font-bold text-dg-ink-dark transition hover:bg-dg-ink-dark/5"
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            onClick={handleJoin}
+            disabled={isJoining}
+            className="flex-1 rounded-full bg-brand-blue px-4 py-3 text-[13px] font-extrabold uppercase tracking-[0.05em] text-white transition hover:bg-brand-blue-dark disabled:opacity-70"
+          >
+            {isJoining ? "Joining…" : "Join Promo"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 /* =========================================================== Toast & icons */
