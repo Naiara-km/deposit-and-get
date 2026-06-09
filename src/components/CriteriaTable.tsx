@@ -53,7 +53,7 @@ export function CriteriaTable() {
 
   // ── Multi-redemption variant (max > 1) ────────────────────────────────
   const multiRedemptionRows: Array<[string, React.ReactNode]> = [
-    ["Min. Deposit", `${min} per deposit per transaction`],
+    ["Min. Deposit", min],
     ["Max. Deposit", min],
     [
       "How spins are earned",
