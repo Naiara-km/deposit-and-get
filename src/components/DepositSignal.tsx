@@ -19,7 +19,8 @@ interface DepositSignalProps {
  *   amount = 0   + active → "Deposit & Get active. This deposit will earn 100 Bonus Spins"
  *   amount < min + active → warning ("deposit at least Rmin to earn N spins")
  *   min..max     + active → success ("this deposit will earn you N spins")
- *   amount > max + active → success with "(max Rmax qualifies)" note
+ *   amount > max + active → success (max-cap note hidden for now — we'll
+ *                            revisit messaging around the cap)
  *   cap reached / pool exhausted / ended / completed / available → hidden
  *
  * Every visible branch shows a "Promo details" trailing link when
@@ -70,16 +71,9 @@ export function DepositSignal({ amount, onShowPromoDetails }: DepositSignalProps
       </Signal>
     );
   }
-  if (amount > promo.maxDeposit) {
-    return (
-      <Signal tone="success" icon="✓">
-        This deposit will earn you {promo.rewardCount} Bonus Spins (max{" "}
-        {currencySymbol}
-        {promo.maxDeposit.toLocaleString()} qualifies).
-        <DetailsLink onClick={onShowPromoDetails} />
-      </Signal>
-    );
-  }
+  // amount > promo.maxDeposit branch intentionally falls through to the
+  // default in-band success copy — the "(max Rxxxx qualifies)" suffix is
+  // hidden until we revisit how to surface the cap.
   return (
     <Signal tone="success" icon="✓">
       This deposit will earn you {promo.rewardCount} Bonus Spins.

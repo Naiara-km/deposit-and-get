@@ -781,7 +781,10 @@ function PromoBottomSheet({ onClose }: { onClose: () => void }) {
   } = usePromo();
   const totalSpins = promo.rewardCount * promo.maxRedemptionsPerUser;
   const min = `${currencySymbol}${promo.minDeposit.toLocaleString()}`;
-  const max = `${currencySymbol}${promo.maxDeposit.toLocaleString()}`;
+  // Max-deposit row is hidden for now — promo.maxDeposit still drives the
+  // underlying logic, just not displayed here. Bring back when messaging
+  // around the cap is finalised.
+  // const max = `${currencySymbol}${promo.maxDeposit.toLocaleString()}`;
   const depositWord = promo.maxRedemptionsPerUser === 1 ? "deposit" : "deposits";
   const showJoin = state === "available";
   const showProgress = isActivelyEarning;
@@ -879,22 +882,15 @@ function PromoBottomSheet({ onClose }: { onClose: () => void }) {
               .
             </span>
           </li>
-          {/* Min / Max deposit thresholds — surfaces the qualifying band so
-              users know how much triggers the reward and where it caps. */}
+          {/* Min deposit threshold — Max row is hidden for now (see note
+              at top of PromoBottomSheet). Bring back as a second <li> when
+              the cap messaging is revisited. */}
           <li className="flex items-start gap-3">
             <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-brand-blue/10 text-brand-blue">
               <Wallet size={15} />
             </span>
             <span>
               Min. Deposit: <strong>{min}</strong>
-            </span>
-          </li>
-          <li className="flex items-start gap-3">
-            <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-brand-blue/10 text-brand-blue">
-              <Wallet size={15} />
-            </span>
-            <span>
-              Max. Deposit: <strong>{max}</strong>
             </span>
           </li>
           <li className="flex items-start gap-3">

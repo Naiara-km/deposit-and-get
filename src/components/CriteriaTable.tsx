@@ -18,12 +18,15 @@ export function CriteriaTable() {
   const max = promo.maxRedemptionsPerUser;
   const totalSpins = promo.rewardCount * max;
   const min = `${currencySymbol}${promo.minDeposit.toLocaleString()}`;
-  const maxD = `${currencySymbol}${promo.maxDeposit.toLocaleString()}`;
+  // Max-deposit display is currently hidden per stakeholder direction
+  // (we'll revisit). `promo.maxDeposit` is still tracked in the mock and
+  // honoured by the validation logic; just don't render the cap here.
+  // const maxD = `${currencySymbol}${promo.maxDeposit.toLocaleString()}`;
 
   // ── Single-redemption variant (max === 1) ─────────────────────────────
   const singleRedemptionRows: Array<[string, React.ReactNode]> = [
     ["Min. Deposit", `${min} per deposit`],
-    ["Max. Deposit", maxD],
+    // ["Max. Deposit", maxD],  // hidden — see note above
     [
       "How spins are earned",
       `${promo.rewardCount} Bonus Spins per qualifying deposit.`,
@@ -54,7 +57,7 @@ export function CriteriaTable() {
   // ── Multi-redemption variant (max > 1) ────────────────────────────────
   const multiRedemptionRows: Array<[string, React.ReactNode]> = [
     ["Min. Deposit", min],
-    ["Max. Deposit", maxD],
+    // ["Max. Deposit", maxD],  // hidden — see note above
     [
       "How spins are earned",
       `${promo.rewardCount} Bonus Spins (per qualifying deposit). One reward per deposit; a larger single deposit does not earn extra spins. Capped at ${totalSpins} Bonus Spins.`,
