@@ -803,12 +803,12 @@ function PromoBottomSheet({ onClose }: { onClose: () => void }) {
       role="dialog"
       aria-modal="true"
       aria-labelledby="promo-sheet-title"
-      className="fixed inset-0 z-50 flex flex-col justify-end bg-black/55"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-end bg-black/55"
       onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative max-h-[88vh] overflow-y-auto rounded-t-2xl bg-white px-5 pb-6 pt-3 shadow-[0_-12px_30px_rgba(8,10,50,0.22)] motion-safe:animate-[slideUp_240ms_ease-out]"
+        className="relative w-full max-w-md max-h-[88vh] overflow-y-auto rounded-t-2xl bg-white px-5 pb-6 pt-3 shadow-[0_-12px_30px_rgba(8,10,50,0.22)] motion-safe:animate-[slideUp_240ms_ease-out]"
       >
         {/* drag handle */}
         <div
