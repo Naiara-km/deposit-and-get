@@ -15,8 +15,17 @@ import { DonutRing } from "@/components/DonutRing";
  * toggle: timeline is hidden by default and a chevron rotates open on tap.
  * Used on the Details page once the user is opted in (active states) so the
  * page leads with progress instead of re-pitching the mechanic.
+ *
+ * `embedded` — when true, drops the outer <section>, padding, and the
+ * "How it works?" heading. The caller is expected to provide its own
+ * surrounding chrome — used by the "Promo details" accordion on the
+ * Details page (active states), where this content nests inside another
+ * accordion and a duplicate heading would be confusing.
  */
-export function HowItWorksWizard({ collapsible = false }: { collapsible?: boolean } = {}) {
+export function HowItWorksWizard({
+  collapsible = false,
+  embedded = false,
+}: { collapsible?: boolean; embedded?: boolean } = {}) {
   const { promo, redemptions, currencySymbol } = usePromo();
   const [open, setOpen] = useState(false);
   const max = promo.maxRedemptionsPerUser;
@@ -62,13 +71,16 @@ export function HowItWorksWizard({ collapsible = false }: { collapsible?: boolea
     },
   ];
 
+  // When `embedded`, the timeline lives inside another accordion on a dark
+  // surface — adjust the rail tint so it still reads but doesn't shout.
+  const railClass = embedded
+    ? "absolute bottom-3.5 left-[13px] top-3.5 w-0.5 bg-white/15"
+    : "absolute bottom-3.5 left-[13px] top-3.5 w-0.5 bg-[#D7D3E8]";
+
   const timeline = (
-    <div className="relative mt-[18px]" id="how-it-works-timeline">
+    <div className={embedded ? "relative" : "relative mt-[18px]"} id="how-it-works-timeline">
       {/* Vertical timeline rail behind the steps */}
-      <div
-        aria-hidden
-        className="absolute bottom-3.5 left-[13px] top-3.5 w-0.5 bg-[#D7D3E8]"
-      />
+      <div aria-hidden className={railClass} />
       <ol className="flex flex-col gap-4">
         {steps.map((s, i) => (
           <li key={i} className="relative flex items-center gap-3.5">
@@ -97,6 +109,9 @@ export function HowItWorksWizard({ collapsible = false }: { collapsible?: boolea
       </ol>
     </div>
   );
+
+  // Embedded — caller provides the section wrapper and the heading.
+  if (embedded) return timeline;
 
   if (!collapsible) {
     return (

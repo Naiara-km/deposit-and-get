@@ -93,10 +93,11 @@ export function PromoDetailsPage() {
       </div>
 
       {/* Light body */}
-      {/* How it works — collapses into an accordion when the user is
-          actively earning, so the page leads with their progress rather
-          than re-pitching the mechanic. */}
-      <HowItWorksWizard collapsible={isActiveVariant(variant)} />
+      {/* How it works — for active variants, the timeline lives inside
+          the "Promo details" accordion (rendered up in the dark area by
+          InfoRows). For every other variant it stays here, expanded,
+          re-pitching the mechanic. */}
+      {!isActiveVariant(variant) && <HowItWorksWizard />}
       <EligibleGames />
       <CriteriaTable />
       <FAQAccordion />
@@ -392,6 +393,8 @@ function InfoRows() {
 
   // Active states — collapse into an accordion so the page leads with the
   // progress card and lets the user pull the conditions back up on demand.
+  // The "How it works" timeline also nests inside this accordion (embedded
+  // mode) so there's a single "more info" surface instead of two.
   return (
     <div className="mx-3.5 mt-4">
       <button
@@ -412,7 +415,17 @@ function InfoRows() {
           aria-hidden
         />
       </button>
-      {open && list}
+      {open && (
+        <>
+          {list}
+          <div className="mt-4 border-t border-white/[0.12] pt-4">
+            <h3 className="m-0 mb-3 px-1 text-[14px] font-bold leading-[1.3] text-white">
+              How it works
+            </h3>
+            <HowItWorksWizard embedded />
+          </div>
+        </>
+      )}
     </div>
   );
 }
