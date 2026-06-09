@@ -54,7 +54,7 @@ export function CriteriaTable() {
   // ── Multi-redemption variant (max > 1) ────────────────────────────────
   const multiRedemptionRows: Array<[string, React.ReactNode]> = [
     ["Min. Deposit", min],
-    ["Max. Deposit", min],
+    ["Max. Deposit", maxD],
     [
       "How spins are earned",
       `${promo.rewardCount} Bonus Spins (per qualifying deposit). One reward per deposit; a larger single deposit does not earn extra spins. Capped at ${totalSpins} Bonus Spins.`,
