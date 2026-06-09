@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Gift, X } from "lucide-react";
+import { ChevronDown, Gift, X } from "lucide-react";
 import { usePromo, type CardVariant } from "@/context/PromoContext";
 import { cardVariant, isActiveVariant, isAvailableVariant, isEndedVariant } from "@/lib/cardVariant";
 import { SegmentedRing } from "@/components/SegmentedRing";
@@ -316,7 +316,14 @@ function StatusCard({ variant }: { variant: CardVariant }) {
 /* =========================================================== InfoRows  */
 
 function InfoRows() {
-  const { promo, currencySymbol } = usePromo();
+  const { promo, state, redemptions, isPoolLow, currencySymbol } = usePromo();
+  const variant = cardVariant(state, redemptions, isPoolLow);
+  // Collapse the info rows by default when the user is already opted in —
+  // they know the terms; the rows are a "tap to remind me" rather than a
+  // primary read. Available states still surface the rows directly because
+  // the user is using them to decide whether to join.
+  const collapsible = isActiveVariant(variant);
+  const [open, setOpen] = useState(false);
   const max = promo.maxRedemptionsPerUser;
   const totalSpins = promo.rewardCount * max;
   const minDeposit = `${currencySymbol}${promo.minDeposit.toLocaleString()}`;
@@ -358,13 +365,13 @@ function InfoRows() {
         },
         { icon: <ClockIcon />, text: <>{promo.campaignWindowLabel}</> },
       ];
-  return (
-    <div className="mx-3.5 mt-4">
+  const list = (
+    <div role={collapsible ? "region" : undefined} id="promo-info-rows">
       {rows.map((r, i) => (
         <div
           key={i}
           className={`flex items-center gap-3 px-1 py-3.5 ${
-            i === 0 ? "" : "border-t border-white/[0.12]"
+            i === 0 && !collapsible ? "" : "border-t border-white/[0.12]"
           }`}
         >
           <span className="inline-flex shrink-0">{r.icon}</span>
@@ -373,6 +380,36 @@ function InfoRows() {
           </span>
         </div>
       ))}
+    </div>
+  );
+
+  if (!collapsible) {
+    return <div className="mx-3.5 mt-4">{list}</div>;
+  }
+
+  // Active states — collapse into an accordion so the page leads with the
+  // progress card and lets the user pull the conditions back up on demand.
+  return (
+    <div className="mx-3.5 mt-4">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-controls="promo-info-rows"
+        className="flex w-full items-center justify-between gap-2 px-1 py-3 text-left"
+      >
+        <span className="text-[13.5px] font-semibold leading-[1.35] text-white">
+          Promo details
+        </span>
+        <ChevronDown
+          size={18}
+          className={`shrink-0 text-white/80 transition-transform duration-200 ${
+            open ? "rotate-180" : ""
+          }`}
+          aria-hidden
+        />
+      </button>
+      {open && list}
     </div>
   );
 }
