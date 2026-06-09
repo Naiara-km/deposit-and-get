@@ -66,8 +66,8 @@ export function HowItWorksWizard({
         ]),
     {
       kind: "spins",
-      title: "Instant Free Spins!",
-      body: "When deposit is processed you will receive your free spins!",
+      title: "Instant Bonus Spins!",
+      body: "When deposit is processed you will receive your bonus spins!",
     },
   ];
 

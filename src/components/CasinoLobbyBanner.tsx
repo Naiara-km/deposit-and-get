@@ -3,13 +3,13 @@ import { Sparkles } from "lucide-react";
 import { usePromo } from "@/context/PromoContext";
 
 /**
- * Visible in the Casino lobby when the user has earned Free Spins on this promo.
+ * Visible in the Casino lobby when the user has earned Bonus Spins on this promo.
  * Bridges the casino dependency mentioned in CLAUDE.md design principle #5.
  */
 export function CasinoLobbyBanner() {
   const { promo, redemptions, isOptedIn } = usePromo();
 
-  // Free Spins live on the user's account from the first redemption,
+  // Bonus Spins live on the user's account from the first redemption,
   // and remain playable even after the promo ends.
   if (!isOptedIn || redemptions <= 0) return null;
 
@@ -27,7 +27,7 @@ export function CasinoLobbyBanner() {
         </span>
         <div>
           <p className="text-[11px] font-bold uppercase tracking-wide">
-            Free Spins ready
+            Bonus Spins ready
           </p>
           <p className="text-sm font-semibold">
             {totalSpins.toLocaleString()} on {promo.eligibleGame.name}

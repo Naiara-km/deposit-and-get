@@ -11,7 +11,7 @@ export function CasinoLobby() {
 
       <StubScreen
         title="Casino lobby grid"
-        notes="Out of scope for this prototype — only the Free Spins banner above is required."
+        notes="Out of scope for this prototype — only the Bonus Spins banner above is required."
       />
     </main>
   );

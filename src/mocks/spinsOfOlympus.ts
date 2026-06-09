@@ -14,8 +14,8 @@ export const SPINS_OF_OLYMPUS = {
   id: "spins-of-olympus",
   name: "Spins of Olympus",
   subtitle: "Deposit R2,000",
-  reward: "100 Free Spins",
-  rewardLabel: "R100 FREE SPINS", // headline copy per handoff
+  reward: "100 Bonus Spins",
+  rewardLabel: "R100 BONUS SPINS", // headline copy per handoff
   rewardCount: 100,
   rewardUnitValue: 1,
   minDeposit: 2000,

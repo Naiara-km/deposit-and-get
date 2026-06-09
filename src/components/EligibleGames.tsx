@@ -18,9 +18,8 @@ const GAMES: Array<{ id: string; name: string; thumb: string }> = [
   { id: "hot-hot-fruit", name: "Hot Hot Fruit", thumb: asset("figma/games/hot-hot-fruit.png") },
   { id: "bucs-gold-rush", name: "Bucs Gold Rush", thumb: asset("figma/games/bucs-gold-rush.png") },
   { id: "clover-gold", name: "Clover Gold", thumb: CLOVER },
-  // Placeholders — replace with real thumbs once provided.
-  { id: "placeholder-7", name: "Coming soon", thumb: CLOVER },
-  { id: "placeholder-8", name: "Coming soon", thumb: CLOVER },
+  { id: "sugar-rush-1000", name: "Sugar Rush 1000", thumb: asset("figma/games/sugar-rush-1000.png") },
+  { id: "5-lions-megaways", name: "5 Lions Megaways", thumb: asset("figma/games/5-lions-megaways.png") },
 ];
 
 export function EligibleGames() {

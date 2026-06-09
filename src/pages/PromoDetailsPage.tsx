@@ -355,7 +355,7 @@ function InfoRows() {
           text: (
             <>
               On every <b>{minDeposit}</b> deposit you get {promo.rewardCount}{" "}
-              Free Spins
+              Bonus Spins
             </>
           ),
         },
@@ -363,7 +363,7 @@ function InfoRows() {
           icon: <GiftIcon />,
           text: (
             <>
-              Unlock up to {max} spins rewards, up to {totalSpins} Free spins.
+              Unlock up to {max} spins rewards, up to {totalSpins} Bonus spins.
             </>
           ),
         },

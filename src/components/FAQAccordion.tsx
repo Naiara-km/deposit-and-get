@@ -7,7 +7,7 @@ import { useState } from "react";
 const FAQS: Array<[string, string]> = [
   [
     "Do I need to Join the promo before I make a deposit?",
-    "Yes — opt in first, then any qualifying deposit during the campaign counts toward your free spins.",
+    "Yes — opt in first, then any qualifying deposit during the campaign counts toward your bonus spins.",
   ],
   [
     "What deposits qualify for the promo?",
@@ -15,11 +15,11 @@ const FAQS: Array<[string, string]> = [
   ],
   [
     "How much will I receive?",
-    "100 free spins per qualifying deposit, up to 5 deposits (500 spins total).",
+    "100 bonus spins per qualifying deposit, up to 5 deposits (500 spins total).",
   ],
   [
     "When will I receive my Rewards?",
-    "Free spins are credited as soon as each deposit is processed.",
+    "Bonus spins are credited as soon as each deposit is processed.",
   ],
   [
     "How can I track my progress?",

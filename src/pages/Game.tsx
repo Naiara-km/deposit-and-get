@@ -28,22 +28,22 @@ export function Game() {
         {hasSpins ? (
           <div className="mt-4 rounded-card border border-divider bg-surface p-4">
             <p className="text-[11px] font-bold uppercase tracking-wide text-brand-yellow">
-              Free Spins ready
+              Bonus Spins ready
             </p>
             <p className="mt-1 text-base font-semibold text-emphasis">
-              {totalSpins.toLocaleString()} Free Spins available
+              {totalSpins.toLocaleString()} Bonus Spins available
             </p>
             <button
               type="button"
               className="mt-3 w-full rounded-pill bg-brand-yellow py-3 text-sm font-bold text-brand-navy"
             >
-              Use Free Spins
+              Use Bonus Spins
             </button>
           </div>
         ) : (
           <div className="mt-4 rounded-card border border-dashed border-divider bg-surface-muted p-4">
             <p className="text-xs text-text-secondary">
-              You don't have any Free Spins for this game yet. Join Spins of
+              You don't have any Bonus Spins for this game yet. Join Spins of
               Olympus and deposit to earn some.
             </p>
           </div>
