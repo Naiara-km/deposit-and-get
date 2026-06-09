@@ -19,7 +19,7 @@ export const SPINS_OF_OLYMPUS = {
   rewardCount: 100,
   rewardUnitValue: 1,
   minDeposit: 2000,
-  maxDeposit: 5000,
+  maxDeposit: 4000,
   maxRedemptionsPerUser: 5,
   poolTotal: 5000,
   campaignDays: 14,
