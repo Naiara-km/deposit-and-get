@@ -110,6 +110,21 @@ export function Deposit() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
+  /** When the user opts in (state flips to "active") OR lands on a Card / EFT
+   *  form already opted in with no amount entered yet, pre-fill the amount
+   *  with the minimum qualifying deposit so the form is one tap from
+   *  earning the reward. */
+  useEffect(() => {
+    if (
+      state === "active" &&
+      (view === "card" || view === "eft") &&
+      amount === ""
+    ) {
+      setAmount(promo.minDeposit);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state, view]);
+
   function handleSubmit() {
     if (phase !== "idle") return;
     if (view === "voucher" && voucherCode.length < 16) return;
@@ -618,7 +633,7 @@ function CardOrEftForm({
         </div>
       </div>
 
-      <DepositSignal amount={numeric} />
+      <DepositSignal amount={numeric} onShowPromoDetails={onShowPromoDetails} />
 
       <div className="flex items-center justify-between pt-1">
         <span className="text-[14px] font-bold text-dg-ink-dark">
@@ -688,88 +703,60 @@ function PrimaryCta({
 }
 
 /**
- * PromoAwarenessBanner — shows the user where they stand vs the promo.
- *   - Available: tappable text/icon area (opens PromoBottomSheet via the
- *     `onSeeDetails` callback) + inline JOIN button as a shortcut.
- *   - Active (cap not reached): static "Deposit & Get active" reminder.
- *   - Otherwise: hidden.
+ * PromoAwarenessBanner — top-of-form banner for the AVAILABLE state only.
+ *
+ * The user has not opted in yet. Tap the text/icon area → PromoBottomSheet
+ * with full details. Inline JOIN button is a shortcut that bypasses the sheet.
+ *
+ * The active state is handled by DepositSignal below the amount input
+ * instead — we no longer show two awareness signals at once.
  */
 function PromoAwarenessBanner({
   onSeeDetails,
 }: {
   onSeeDetails?: () => void;
 }) {
-  const {
-    promo,
-    state,
-    currencySymbol,
-    isActivelyEarning,
-    redemptionsRemaining,
-    isJoining,
-    joinPromo,
-  } = usePromo();
+  const { promo, state, isJoining, joinPromo } = usePromo();
 
-  if (state === "available") {
-    return (
-      <aside
-        role="status"
-        className="flex items-center justify-between gap-3 rounded-[10px] border border-brand-blue/25 bg-brand-blue/[0.06] px-4 py-3"
-      >
-        <button
-          type="button"
-          onClick={onSeeDetails}
-          disabled={!onSeeDetails}
-          className="flex flex-1 items-start gap-2.5 text-left transition disabled:cursor-default"
-          aria-label="See promo details"
-        >
-          <Gift size={18} className="mt-0.5 shrink-0 text-brand-blue" />
-          <span className="text-[13px] leading-snug text-dg-ink-dark">
-            <strong>Deposit &amp; Get</strong> available — opt in to earn{" "}
-            <strong className="text-brand-blue">
-              {promo.rewardCount} Bonus Spins
-            </strong>{" "}
-            per deposit.{" "}
-            {onSeeDetails && (
-              <span className="text-brand-blue underline">See details</span>
-            )}
-          </span>
-        </button>
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            joinPromo();
-          }}
-          disabled={isJoining}
-          className="shrink-0 whitespace-nowrap rounded-full bg-brand-blue px-4 py-1.5 text-[11.5px] font-extrabold uppercase tracking-[0.06em] text-white disabled:opacity-70"
-        >
-          {isJoining ? "Joining…" : "Join"}
-        </button>
-      </aside>
-    );
-  }
+  if (state !== "available") return null;
 
-  if (isActivelyEarning && redemptionsRemaining > 0) {
-    return (
-      <aside
-        role="status"
-        className="flex items-start gap-2.5 rounded-[10px] border border-success/30 bg-success/10 px-4 py-3"
+  return (
+    <aside
+      role="status"
+      className="flex items-center justify-between gap-3 rounded-[10px] border border-brand-blue/25 bg-brand-blue/[0.06] px-4 py-3"
+    >
+      <button
+        type="button"
+        onClick={onSeeDetails}
+        disabled={!onSeeDetails}
+        className="flex flex-1 items-start gap-2.5 text-left transition disabled:cursor-default"
+        aria-label="See promo details"
       >
-        <Gift size={18} className="mt-0.5 shrink-0 text-success" />
-        <p className="text-[13px] leading-snug text-dg-ink-dark">
-          <strong>Deposit &amp; Get</strong> active. Qualifying{" "}
-          <strong>
-            {currencySymbol}
-            {promo.minDeposit.toLocaleString()}
+        <Gift size={18} className="mt-0.5 shrink-0 text-brand-blue" />
+        <span className="text-[13px] leading-snug text-dg-ink-dark">
+          <strong>Deposit &amp; Get</strong> available, Join now to earn{" "}
+          <strong className="text-brand-blue">
+            {promo.rewardCount} Bonus Spins
           </strong>{" "}
-          deposits earn{" "}
-          <strong>{promo.rewardCount} Bonus Spins</strong>.
-        </p>
-      </aside>
-    );
-  }
-
-  return null;
+          per deposit.{" "}
+          {onSeeDetails && (
+            <span className="text-brand-blue underline">See details</span>
+          )}
+        </span>
+      </button>
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          joinPromo();
+        }}
+        disabled={isJoining}
+        className="shrink-0 whitespace-nowrap rounded-full bg-brand-blue px-4 py-1.5 text-[11.5px] font-extrabold uppercase tracking-[0.06em] text-white disabled:opacity-70"
+      >
+        {isJoining ? "Joining…" : "Join"}
+      </button>
+    </aside>
+  );
 }
 
 /* =========================================================== PromoBottomSheet */
@@ -783,10 +770,20 @@ function PromoAwarenessBanner({
  * over once the state flip lands.
  */
 function PromoBottomSheet({ onClose }: { onClose: () => void }) {
-  const { promo, currencySymbol, isJoining, joinPromo } = usePromo();
+  const {
+    promo,
+    state,
+    redemptions,
+    currencySymbol,
+    isJoining,
+    joinPromo,
+    isActivelyEarning,
+  } = usePromo();
   const totalSpins = promo.rewardCount * promo.maxRedemptionsPerUser;
   const min = `${currencySymbol}${promo.minDeposit.toLocaleString()}`;
   const depositWord = promo.maxRedemptionsPerUser === 1 ? "deposit" : "deposits";
+  const showJoin = state === "available";
+  const showProgress = isActivelyEarning;
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -811,7 +808,7 @@ function PromoBottomSheet({ onClose }: { onClose: () => void }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative max-h-[88vh] overflow-y-auto rounded-t-2xl bg-white px-5 pb-6 pt-3 shadow-[0_-12px_30px_rgba(8,10,50,0.22)]"
+        className="relative max-h-[88vh] overflow-y-auto rounded-t-2xl bg-white px-5 pb-6 pt-3 shadow-[0_-12px_30px_rgba(8,10,50,0.22)] motion-safe:animate-[slideUp_240ms_ease-out]"
       >
         {/* drag handle */}
         <div
@@ -832,7 +829,7 @@ function PromoBottomSheet({ onClose }: { onClose: () => void }) {
         </div>
         <h2
           id="promo-sheet-title"
-          className="mt-1 text-[24px] font-extrabold leading-tight text-dg-gold"
+          className="mt-1 text-[24px] font-extrabold leading-tight"
           style={{ color: "#C99412" }}
         >
           {totalSpins} Bonus Spins
@@ -840,6 +837,30 @@ function PromoBottomSheet({ onClose }: { onClose: () => void }) {
         <p className="mt-1 text-[13.5px] text-dg-ink-sub">
           {promo.maxRedemptionsPerUser} {depositWord} of {min} to win
         </p>
+
+        {/* Emphasis: user has to join before they deposit to benefit. */}
+        {showJoin && (
+          <aside
+            role="note"
+            className="mt-4 rounded-[10px] border border-brand-blue/25 bg-brand-blue/[0.06] px-3.5 py-3 text-[13px] leading-snug text-dg-ink-dark"
+          >
+            <strong>You need to actively join the promo</strong> before
+            depositing to start earning Bonus Spins on your deposits.
+          </aside>
+        )}
+
+        {/* Live progress — only when the user is actively earning. */}
+        {showProgress && (
+          <aside
+            role="status"
+            className="mt-4 flex items-center justify-between rounded-[10px] bg-success/10 px-3.5 py-3 text-[13px] text-dg-ink-dark"
+          >
+            <span className="font-semibold">Your progress</span>
+            <span className="text-success font-extrabold tabular-nums">
+              {redemptions}/{promo.maxRedemptionsPerUser} deposits done
+            </span>
+          </aside>
+        )}
 
         <ul className="mt-5 flex flex-col gap-3 text-[13px] text-dg-ink-dark">
           <li className="flex items-start gap-3">
@@ -882,14 +903,16 @@ function PromoBottomSheet({ onClose }: { onClose: () => void }) {
           >
             Close
           </button>
-          <button
-            type="button"
-            onClick={handleJoin}
-            disabled={isJoining}
-            className="flex-1 rounded-full bg-brand-blue px-4 py-3 text-[13px] font-extrabold uppercase tracking-[0.05em] text-white transition hover:bg-brand-blue-dark disabled:opacity-70"
-          >
-            {isJoining ? "Joining…" : "Join Promo"}
-          </button>
+          {showJoin && (
+            <button
+              type="button"
+              onClick={handleJoin}
+              disabled={isJoining}
+              className="flex-1 rounded-full bg-brand-blue px-4 py-3 text-[13px] font-extrabold uppercase tracking-[0.05em] text-white transition hover:bg-brand-blue-dark disabled:opacity-70"
+            >
+              {isJoining ? "Joining…" : "Join Promo"}
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -100,6 +100,18 @@ export default {
           "10%": { opacity: "1" },
           "100%": { transform: "translateY(700%) rotate(540deg)", opacity: "0" },
         },
+        // Subtle fade-in + slight rise. Used by DepositSignal when it
+        // appears after the user opts in (so the new banner animates in
+        // below the amount field).
+        fadeInUp: {
+          "0%": { transform: "translateY(4px)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
+        // Bottom-sheet entrance.
+        slideUp: {
+          "0%": { transform: "translateY(100%)" },
+          "100%": { transform: "translateY(0)" },
+        },
       },
       animation: {
         "vf-fall": "vf-fall 2.6s linear infinite",
