@@ -53,7 +53,8 @@ export function DepositSignal({ amount, onShowPromoDetails }: DepositSignalProps
   if (amount <= 0) {
     return (
       <Signal tone="success" icon={<Gift size={16} />}>
-        <strong>Deposit &amp; Get</strong> active. This deposit will earn you{" "}
+        Qualifying {currencySymbol}
+        {promo.minDeposit.toLocaleString()} deposits will earn you{" "}
         <strong>{promo.rewardCount} Bonus Spins</strong>.
         <DetailsLink onClick={onShowPromoDetails} />
       </Signal>
