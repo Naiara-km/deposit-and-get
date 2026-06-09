@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { usePromo } from "@/context/PromoContext";
 import { DonutRing } from "@/components/DonutRing";
 
@@ -8,9 +10,15 @@ import { DonutRing } from "@/components/DonutRing";
  *   - max === 1 — 3 steps (Join → Deposit → Instant Spins) per Figma 78:6116.
  *                The Track Progress step is dropped because there's no
  *                progress to track on a single-deposit promo.
+ *
+ * `collapsible` — when true, the section header doubles as an accordion
+ * toggle: timeline is hidden by default and a chevron rotates open on tap.
+ * Used on the Details page once the user is opted in (active states) so the
+ * page leads with progress instead of re-pitching the mechanic.
  */
-export function HowItWorksWizard() {
+export function HowItWorksWizard({ collapsible = false }: { collapsible?: boolean } = {}) {
   const { promo, redemptions, currencySymbol } = usePromo();
+  const [open, setOpen] = useState(false);
   const max = promo.maxRedemptionsPerUser;
   const isSingleDeposit = max === 1;
   const totalSpins = promo.rewardCount * max;
@@ -54,47 +62,74 @@ export function HowItWorksWizard() {
     },
   ];
 
+  const timeline = (
+    <div className="relative mt-[18px]" id="how-it-works-timeline">
+      {/* Vertical timeline rail behind the steps */}
+      <div
+        aria-hidden
+        className="absolute bottom-3.5 left-[13px] top-3.5 w-0.5 bg-[#D7D3E8]"
+      />
+      <ol className="flex flex-col gap-4">
+        {steps.map((s, i) => (
+          <li key={i} className="relative flex items-center gap-3.5">
+            <span className="z-[1] inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-dg-navy text-[13px] font-extrabold text-white">
+              {i + 1}
+            </span>
+            <div className="flex flex-1 items-center gap-3 rounded-[12px] bg-white px-3.5 py-3 shadow-[0_1px_4px_rgba(20,20,60,0.06)]">
+              <StepIcon
+                kind={s.kind}
+                done={redemptions}
+                max={promo.maxRedemptionsPerUser}
+              />
+              <div className="min-w-0">
+                <div className="text-[13.5px] font-bold leading-tight text-dg-ink-dark">
+                  {s.title}
+                </div>
+                {s.body && (
+                  <div className="mt-0.5 text-xs leading-[1.3] text-dg-ink-sub">
+                    {s.body}
+                  </div>
+                )}
+              </div>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+
+  if (!collapsible) {
+    return (
+      <section className="px-[18px] pb-2 pt-6">
+        <h2 className="m-0 text-[21px] font-extrabold text-dg-ink-dark">
+          How it works?
+        </h2>
+        {timeline}
+      </section>
+    );
+  }
+
   return (
     <section className="px-[18px] pb-2 pt-6">
-      <h2 className="m-0 text-[21px] font-extrabold text-dg-ink-dark">
-        How it works?
-      </h2>
-      <div className="relative mt-[18px]">
-        {/* Vertical timeline rail behind the steps */}
-        <div
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-controls="how-it-works-timeline"
+        className="flex w-full items-center justify-between gap-2 py-1 text-left"
+      >
+        <h2 className="m-0 text-[21px] font-extrabold text-dg-ink-dark">
+          How it works?
+        </h2>
+        <ChevronDown
+          size={22}
           aria-hidden
-          className="absolute bottom-3.5 left-[13px] top-3.5 w-0.5 bg-[#D7D3E8]"
+          className={`shrink-0 text-dg-ink-dark transition-transform duration-200 ${
+            open ? "rotate-180" : ""
+          }`}
         />
-        <ol className="flex flex-col gap-4">
-          {steps.map((s, i) => (
-            <li
-              key={i}
-              className="relative flex items-center gap-3.5"
-            >
-              <span className="z-[1] inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-dg-navy text-[13px] font-extrabold text-white">
-                {i + 1}
-              </span>
-              <div className="flex flex-1 items-center gap-3 rounded-[12px] bg-white px-3.5 py-3 shadow-[0_1px_4px_rgba(20,20,60,0.06)]">
-                <StepIcon
-                  kind={s.kind}
-                  done={redemptions}
-                  max={promo.maxRedemptionsPerUser}
-                />
-                <div className="min-w-0">
-                  <div className="text-[13.5px] font-bold leading-tight text-dg-ink-dark">
-                    {s.title}
-                  </div>
-                  {s.body && (
-                    <div className="mt-0.5 text-xs leading-[1.3] text-dg-ink-sub">
-                      {s.body}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </div>
+      </button>
+      {open && timeline}
     </section>
   );
 }

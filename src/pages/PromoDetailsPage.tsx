@@ -93,7 +93,10 @@ export function PromoDetailsPage() {
       </div>
 
       {/* Light body */}
-      <HowItWorksWizard />
+      {/* How it works — collapses into an accordion when the user is
+          actively earning, so the page leads with their progress rather
+          than re-pitching the mechanic. */}
+      <HowItWorksWizard collapsible={isActiveVariant(variant)} />
       <EligibleGames />
       <CriteriaTable />
       <FAQAccordion />
