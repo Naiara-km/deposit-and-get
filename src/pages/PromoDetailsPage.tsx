@@ -3,9 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ChevronDown, Gift, X } from "lucide-react";
 import { usePromo, type CardVariant } from "@/context/PromoContext";
 import { cardVariant, isActiveVariant, isAvailableVariant, isEndedVariant, isEngagedVariant } from "@/lib/cardVariant";
-import { SegmentedRing } from "@/components/SegmentedRing";
-import { BonusSpinsEarnedCard } from "@/components/BonusSpinsEarnedCard";
-import { EarnedRewardsCard } from "@/components/EarnedRewardsCard";
+import { ProgressBar } from "@/components/ProgressBar";
 import { SiteHeader } from "@/components/SiteHeader";
 import { HowItWorksWizard } from "@/components/HowItWorksWizard";
 import { EligibleGames } from "@/components/EligibleGames";
@@ -66,29 +64,15 @@ export function PromoDetailsPage() {
       <div className="bg-dg-navy pb-4">
         <BackNav />
         <Hero variant={variant} />
-        {/* StatusCard (glass progress panel — SegmentedRing + counter) —
-            shown for active states (per Figma 72:7965 + 75:9683) AND completed
-            (per Figma 75:10482, where the ring switches to the green-check
-            completed variant and the copy becomes "You completed the promo!").
-            Ended states skip the StatusCard — the BonusSpinsEarnedCard below
-            carries the celebratory beat instead. */}
-        {(isActiveVariant(variant) || variant === "completed") && (
-          <StatusCard variant={variant} />
-        )}
-        {/* "What you've earned" small white card with empty/won states —
-            shown for ACTIVE states (Figma 72:7965 / 75:9683) AND COMPLETED
-            (Figma 78:7599 — completed uses this smaller card, not the big
-            celebratory one). */}
-        {(isActiveVariant(variant) || variant === "completed") && (
-          <EarnedRewardsCard earned={redemptions * promo.rewardCount} />
-        )}
-        {/* Big celebratory "N BONUS SPINS EARNED" card — for ENDED states
-            (ended-pool, ended-time) only. */}
-        {isEndedVariant(variant) && (
-          <BonusSpinsEarnedCard
-            earned={redemptions * promo.rewardCount}
-          />
-        )}
+        {/* StatusCard — single merged panel: ProgressBar + divider +
+            "What you've won" section. Shown for every engaged state
+            (active, completed, ended-time, ended-pool). Per Figma
+            130:10564 / 130:11623 / 130:12160. Replaces the previous
+            three separate cards (StatusCard + EarnedRewardsCard +
+            BonusSpinsEarnedCard). */}
+        {(isActiveVariant(variant) ||
+          variant === "completed" ||
+          isEndedVariant(variant)) && <StatusCard variant={variant} />}
         <InfoRows />
       </div>
 
@@ -163,10 +147,10 @@ function BackNav() {
 /* =========================================================== Hero       */
 
 function Hero({ variant }: { variant: CardVariant }) {
-  const bw = isEndedVariant(variant);
+  // Hero now renders in colour across every state — per Figma 130:10564 /
+  // 130:11623 / 130:12160, only the badge label changes between states.
   const { currencySymbol, promo, poolRemaining } = usePromo();
   const badge = badgeForVariant(variant);
-  const isBW = isEndedVariant(variant);
   const isActive = isActiveVariant(variant);
   const max = promo.maxRedemptionsPerUser;
   const totalSpins = promo.rewardCount * max;
@@ -176,7 +160,7 @@ function Hero({ variant }: { variant: CardVariant }) {
     <div className="relative mx-3.5 mt-3 h-[170px] overflow-hidden rounded-[14px]">
       <div
         aria-hidden
-        className={`absolute inset-0 bg-cover bg-center ${bw ? "[filter:grayscale(1)]" : ""}`}
+        className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url("${asset("figma/bg-available.png")}")` }}
       />
       <div
@@ -187,13 +171,11 @@ function Hero({ variant }: { variant: CardVariant }) {
             "linear-gradient(180deg, rgba(18,22,108,0.78), rgba(18,22,108,0.30) 55%, rgba(18,22,108,0.20))",
         }}
       />
-      {/* Top-right stack: status badge + pool badge (active only) */}
+      {/* Top-right stack: status badge + pool chip (active only) */}
       <div className="absolute right-3 top-3 z-[5] flex flex-col items-end gap-1.5">
         {badge && (
           <div
-            className={`whitespace-nowrap rounded-[7px] bg-white px-2.5 py-1 text-[10.5px] font-extrabold uppercase tracking-[0.06em] ${
-              isBW ? "text-[#3a3a3a]" : "text-dg-card"
-            }`}
+            className="whitespace-nowrap rounded-[7px] bg-white px-2.5 py-1 text-[10.5px] font-extrabold uppercase tracking-[0.06em] text-dg-card"
             style={{ boxShadow: "0 2px 8px rgba(8,10,50,0.25)" }}
           >
             {badge}
@@ -217,9 +199,7 @@ function Hero({ variant }: { variant: CardVariant }) {
           DEPOSIT &amp; GET
         </div>
         <div
-          className={`mt-1 text-[26px] font-extrabold uppercase leading-[1.05] tracking-[-0.01em] ${
-            bw ? "text-white/90" : "text-dg-gold"
-          }`}
+          className="mt-1 text-[26px] font-extrabold uppercase leading-[1.05] tracking-[-0.01em] text-dg-gold"
           style={{ textShadow: "0 2px 10px rgba(8,10,50,0.5)" }}
         >
           {totalSpins} Bonus Spins
@@ -239,10 +219,11 @@ function badgeForVariant(variant: CardVariant): string | null {
     case "active-low":
     case "active-start":
       return "ACTIVE";
+    // Both ended branches unify to EXPIRED per the 2026-06-12 design brief —
+    // the celebratory pool-out distinction collapses into a single label.
     case "ended-time":
-      return "ENDED";
     case "ended-pool":
-      return "POOL CLOSED";
+      return "EXPIRED";
     case "completed":
       return "COMPLETED";
     default:
@@ -272,48 +253,34 @@ function StatusCard({ variant }: { variant: CardVariant }) {
   const earned = redemptions * promo.rewardCount;
   const max = promo.maxRedemptionsPerUser;
   const totalSpins = promo.rewardCount * max;
-  const isCompleted = variant === "completed";
+  const depositWord = max === 1 ? "deposit" : "deposits";
+  const subLabel = `${redemptions}/${max} ${depositWord} of ${currencySymbol}${promo.minDeposit.toLocaleString()}`;
 
   return (
     <section
-      className="mx-3.5 mt-3 flex items-center gap-4 rounded-2xl border-t-[0.5px] border-[rgba(227,241,253,0.3)] bg-white/[0.12] p-4 backdrop-blur-md"
-      aria-label="Progress"
+      className="mx-3.5 mt-3 rounded-2xl border-t-[0.5px] border-[rgba(227,241,253,0.3)] bg-white/[0.12] p-4 backdrop-blur-md"
+      aria-label="Promo progress and earnings"
     >
-      <SegmentedRing
-        segments={max}
-        filled={redemptions}
-        size={72}
-        completed={isCompleted}
+      <ProgressBar
+        done={redemptions}
+        max={max}
+        earned={earned}
+        total={totalSpins}
+        subLabel={subLabel}
       />
-      <div className="min-w-0 flex-1">
-        {isCompleted ? (
-          <>
-            <div className="text-[17px] font-extrabold leading-tight text-white">
-              You completed the promo!
-            </div>
-            <div className="mt-1 text-[13px] font-semibold text-white/85 tabular-nums">
-              {max}/{max} Deposits done!
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="text-[14px] font-medium leading-tight text-white/85">
-              Earned Spins
-            </div>
-            <div className="mt-0.5 flex items-baseline gap-1">
-              <span className="text-[26px] font-extrabold leading-none text-dg-gold tabular-nums">
-                {earned}
-              </span>
-              <span className="text-[15px] font-semibold text-white/55 tabular-nums">
-                /{totalSpins}
-              </span>
-            </div>
-            <div className="mt-1 text-[12.5px] font-semibold text-white tabular-nums">
-              {redemptions}/{max} Deposits of {currencySymbol}
-              {promo.minDeposit.toLocaleString()}
-            </div>
-          </>
-        )}
+      {/* Divider + "What you've won" sub-section — merged inside this card
+          per Figma 130:10564 / 130:11623 / 130:12160 (single panel replaces
+          the previous separate EarnedRewardsCard / BonusSpinsEarnedCard). */}
+      <div className="mt-4 border-t border-white/[0.12] pt-4">
+        <div className="text-[13px] font-semibold text-white">
+          What you've won
+        </div>
+        <div className="mt-1 text-[15px] font-extrabold text-dg-gold tabular-nums">
+          {earned} Bonus Spins
+        </div>
+        <div className="mt-1 text-[12.5px] leading-snug text-white/70">
+          Your Bonus Spins live inside the eligible games.
+        </div>
       </div>
     </section>
   );

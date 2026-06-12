@@ -176,7 +176,7 @@ function ctaConfig(
     case "active-start":
       return { label: "DEPOSIT", action: handlers.onDeposit, enabled: true };
     case "ended-time":
-      return { label: "PROMO ENDED", enabled: false };
+      return { label: "PROMO EXPIRED", enabled: false };
     case "completed":
       return { label: "PLAY NOW", action: handlers.onPlay, enabled: true };
     default:

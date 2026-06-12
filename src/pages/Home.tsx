@@ -90,7 +90,7 @@ function DepositGetBanner() {
       />
 
       {/* Top-right state pill */}
-      <BannerBadge variant={variant} endsAt={promo.campaignEndsAt} />
+      <BannerBadge variant={variant} />
 
       <div className="relative h-full px-4 py-3.5">
         <BannerContent
@@ -106,13 +106,7 @@ function DepositGetBanner() {
   );
 }
 
-function BannerBadge({
-  variant,
-  endsAt,
-}: {
-  variant: CardVariant;
-  endsAt: Date;
-}) {
+function BannerBadge({ variant }: { variant: CardVariant }) {
   // White-pill states (ACTIVE / COMPLETED)
   if (
     variant === "active" ||
@@ -124,22 +118,13 @@ function BannerBadge({
   if (variant === "completed") {
     return <Pill bg="bg-white" text="text-dg-card">COMPLETED</Pill>;
   }
-  // Dark-pill states (PROMO FULL / POOL CLOSED / ENDED ON X)
+  // Dark-pill states (PROMO FULL / EXPIRED variants)
   if (variant === "available-full") {
     return <Pill bg="bg-[#0E1466]" text="text-white">PROMO FULL</Pill>;
   }
-  if (variant === "ended-pool") {
-    return <Pill bg="bg-[#0E1466]" text="text-white">POOL CLOSED</Pill>;
-  }
-  if (variant === "ended-time") {
-    return (
-      <Pill bg="bg-[#0E1466]" text="text-white">
-        ENDED ON{" "}
-        {endsAt
-          .toLocaleDateString("en-GB", { day: "numeric", month: "short" })
-          .toUpperCase()}
-      </Pill>
-    );
+  // Both ended branches unify to EXPIRED per the 2026-06-12 design brief.
+  if (variant === "ended-pool" || variant === "ended-time") {
+    return <Pill bg="bg-white" text="text-dg-card">EXPIRED</Pill>;
   }
   return null; // available has no pill
 }
@@ -230,12 +215,12 @@ function BannerContent({
     );
   }
 
-  // ── Ended-* — frozen at last value, muted treatment
+  // ── Expired — frozen at last value, muted treatment
   if (isEnded) {
     return (
       <>
         <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-white/65">
-          Promo Ended
+          Promo Expired
         </div>
         <div
           className="mt-0.5 text-[22px] font-extrabold uppercase leading-none text-white/90 tabular-nums"
