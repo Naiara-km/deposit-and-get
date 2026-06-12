@@ -42,3 +42,17 @@ export function isEndedVariant(v: CardVariant): boolean {
 export function isAvailableVariant(v: CardVariant): boolean {
   return v === "available" || v === "available-full";
 }
+
+/**
+ * "Engaged" — the user already knows the mechanic because they've opted in
+ * at some point (active right now, finished, or the campaign closed on them).
+ * Surfaces use this to decide whether to collapse repeating reference content
+ * (e.g. the Promo details + How it works accordion on the Details page).
+ *
+ * Excludes `ended-pool` for now — the pool-exhausted state has its own
+ * celebratory "Bonus Spins Earned" treatment and we may want to handle it
+ * separately. Add to this union if the same accordion behaviour is wanted.
+ */
+export function isEngagedVariant(v: CardVariant): boolean {
+  return isActiveVariant(v) || v === "completed" || v === "ended-time";
+}

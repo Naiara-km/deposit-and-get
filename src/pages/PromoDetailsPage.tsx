@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown, Gift, X } from "lucide-react";
 import { usePromo, type CardVariant } from "@/context/PromoContext";
-import { cardVariant, isActiveVariant, isAvailableVariant, isEndedVariant } from "@/lib/cardVariant";
+import { cardVariant, isActiveVariant, isAvailableVariant, isEndedVariant, isEngagedVariant } from "@/lib/cardVariant";
 import { SegmentedRing } from "@/components/SegmentedRing";
 import { BonusSpinsEarnedCard } from "@/components/BonusSpinsEarnedCard";
 import { EarnedRewardsCard } from "@/components/EarnedRewardsCard";
@@ -93,11 +93,13 @@ export function PromoDetailsPage() {
       </div>
 
       {/* Light body */}
-      {/* How it works — for active variants, the timeline lives inside
-          the "Promo details" accordion (rendered up in the dark area by
-          InfoRows). For every other variant it stays here, expanded,
-          re-pitching the mechanic. */}
-      {!isActiveVariant(variant) && <HowItWorksWizard />}
+      {/* How it works — for engaged variants (active / completed /
+          ended-time), the timeline lives inside the "Promo details"
+          accordion (rendered up in the dark area by InfoRows). For
+          unengaged variants (available / available-full / ended-pool)
+          it stays here, expanded, so first-time viewers and pool-out
+          summaries still see the mechanic. */}
+      {!isEngagedVariant(variant) && <HowItWorksWizard />}
       <EligibleGames />
       <CriteriaTable />
       <FAQAccordion />
@@ -322,11 +324,13 @@ function StatusCard({ variant }: { variant: CardVariant }) {
 function InfoRows() {
   const { promo, state, redemptions, isPoolLow, currencySymbol } = usePromo();
   const variant = cardVariant(state, redemptions, isPoolLow);
-  // Collapse the info rows by default when the user is already opted in —
-  // they know the terms; the rows are a "tap to remind me" rather than a
-  // primary read. Available states still surface the rows directly because
-  // the user is using them to decide whether to join.
-  const collapsible = isActiveVariant(variant);
+  // Collapse the info rows when the user has engaged with the promo —
+  // currently active, finished it, or had the campaign close on them.
+  // They already know the terms; the rows are a "tap to remind me" rather
+  // than a primary read. Available + pool-exhausted states still surface
+  // the rows directly because the viewer is using them to decide whether
+  // to join (or understanding what they missed).
+  const collapsible = isEngagedVariant(variant);
   const [open, setOpen] = useState(false);
   const max = promo.maxRedemptionsPerUser;
   const totalSpins = promo.rewardCount * max;
